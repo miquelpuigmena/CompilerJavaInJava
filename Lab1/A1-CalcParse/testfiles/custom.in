@@ -1,0 +1,5 @@
+let CUSTOM = 3.34 in 
+	let KUSTOM = CUSTOM in
+		2.0*KUSTOM*CUSTOM
+	end
+end

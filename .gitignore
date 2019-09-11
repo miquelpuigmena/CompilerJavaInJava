@@ -1,0 +1,11 @@
+**/build/
+**.idea/
+**.project
+**.gradle/
+**.classpath
+*.zip
+*.log
+*.tex
+*.pdf
+*.aux
+*.gz
