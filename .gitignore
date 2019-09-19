@@ -10,3 +10,5 @@
 *.aux
 *.gz
 *.jar
+**A2-CalcAST
+**stale_outputs_checked

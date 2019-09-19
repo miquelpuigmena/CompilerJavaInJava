@@ -1,0 +1,10 @@
+Program ::= Expr;
+
+abstract Expr;
+
+Function: Expr ::= IdDecl Arg Block;
+IdDecl      ::= <ID:String>;
+Int     ::= <INT:String>;
+Arg     ::= ;
+Block   ::= ;
+
