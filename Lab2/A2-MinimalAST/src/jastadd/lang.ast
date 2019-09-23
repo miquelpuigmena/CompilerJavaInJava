@@ -1,9 +1,9 @@
-Program ::= Expr;
+Program ::= Func*;
 
-abstract Expr;
+abstract Func;
 
-Function: Expr ::= IdDecl Arg Block;
-IdDecl      ::= <ID:String>;
+FuncDecl: Func ::= Name:IdDecl Arg Block;
+IdDecl  ::= <ID:String>;
 Int     ::= <INT:String>;
 Arg     ::= ;
 Block   ::= ;

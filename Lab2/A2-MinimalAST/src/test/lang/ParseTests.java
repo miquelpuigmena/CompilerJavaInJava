@@ -14,6 +14,6 @@ public class ParseTests {
 
 	@Test
 	public void error() {
-		Util.testSyntaxError(TEST_DIRECTORY, "error.in");
+		Util.testSyntaxError(TEST_DIRECTORY, "step1error.in");
 	}
 }

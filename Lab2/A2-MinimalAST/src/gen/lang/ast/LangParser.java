@@ -38,21 +38,32 @@ public class LangParser extends beaver.Parser {
   }
 
   private final Action[] actions = {
-    new Action() { // [0] program =  exp
+    new Action() { // [0] program =  func_list
       public Symbol reduce(Symbol[] _symbols, int offset) {
-        final Expr a = (Expr) _symbols[offset + 1].value;
+        final List a = (List) _symbols[offset + 1].value;
         return new Program(a);
       }
     },
-    Action.RETURN, // [1] exp =  function (default action: return symbol 1)
-    new Action() { // [2] GOAL =  program EOF
+    new Action() { // [1] func_list =  func_decl
+      public Symbol reduce(Symbol[] _symbols, int offset) {
+        final FuncDecl a = (FuncDecl) _symbols[offset + 1].value;
+        return new List().add(a);
+      }
+    },
+    new Action() { // [2] func_list =  func_list func_decl
+      public Symbol reduce(Symbol[] _symbols, int offset) {
+        final List a = (List) _symbols[offset + 1].value;
+        final FuncDecl b = (FuncDecl) _symbols[offset + 2].value;
+        return a.add(b);
+      }
+    },
+    new Action() { // [3] GOAL =  program EOF
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Program program = (Program) _symbols[offset + 1].value;
         final Symbol sym2 = _symbols[offset + 2];
         return program;
       }
     },
-    RETURN2, // [3] exp =  function exp (default action: return symbol 2)
     new Action() { // [4] arg =  LEFTPARENTHESIS RIGHTPARENTHESIS
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Symbol LEFTPARENTHESIS = _symbols[offset + 1];
@@ -60,13 +71,13 @@ public class LangParser extends beaver.Parser {
         return new Arg();
       }
     },
-    new Action() { // [5] function =  INT ID arg block
+    new Action() { // [5] func_decl =  INT ID arg block
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Symbol INT = _symbols[offset + 1];
         final Symbol id = _symbols[offset + 2];
         final Arg a = (Arg) _symbols[offset + 3].value;
         final Block b = (Block) _symbols[offset + 4].value;
-        return new Function(new IdDecl(id),a, b);
+        return new FuncDecl(new IdDecl(id), a, b);
       }
     },
     new Action() { // [6] block =  LEFTBRACKET RIGHTBRACKET
@@ -78,16 +89,11 @@ public class LangParser extends beaver.Parser {
     },
   };
 
-      static final Action RETURN2 = new Action() {
-        public Symbol reduce(Symbol[] _symbols, int offset) {
-          return _symbols[offset + 2];
-        }
-      };
   static final ParsingTables PARSING_TABLES = new ParsingTables(
-    "U9o5aJiFmZ0CXA$kapvWOaDYPuETZOcP3V5Roi#cXTPSIX5nXtBIP#lg94uT03S8GiI8z86" +
-    "CEK4Efye5LVXAVQCzT$wqCBNEk9SvfJ2kD2kVfhOqjLPRppNQ8E2DCdREXnoZK0hb4A6UfW" +
-    "w1vwAvbSObnicC2sVwqP7L7P$JcMJyrpNPa2tPaJqva2CvaJEvaEkujwqPlb0zwIRVj9xWU" +
-    "kEVKaxLJJVWR8LP#6h26KTyBq7r1XaIrmy=");
+    "U9o5aJiJWZ0GX9Vm544gEsVixRItixAsS$mj#BFbUMuWQgx1c$d8BSjTaWF00mOn8daXHOW" +
+    "S2MoKqnCYT7#HUJbabD6JA#KDCdYgzpsibIfKNQUyZV9QQJtLI8E0PywuSygUEM9Xe90f#4" +
+    "aWtx0tyPNoeWLFroLAcGKLBlNakO7gYRax5#FkkYKxiYS7SYGdSYONSYKtSdUrRJst7Epgy" +
+    "lwJEptwkfxtg$0lx5m3JjLYE673#Hg#ZVY$3CetWKFP00==");
 
   public LangParser() {
     super(PARSING_TABLES);

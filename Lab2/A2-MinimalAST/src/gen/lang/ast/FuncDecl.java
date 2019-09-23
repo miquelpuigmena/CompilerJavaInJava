@@ -6,15 +6,15 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/jastadd/lang.ast:5
- * @astdecl Function : Expr ::= IdDecl Arg Block;
- * @production Function : {@link Expr} ::= <span class="component">{@link IdDecl}</span> <span class="component">{@link Arg}</span> <span class="component">{@link Block}</span>;
+ * @astdecl FuncDecl : Func ::= Name:IdDecl Arg Block;
+ * @production FuncDecl : {@link Func} ::= <span class="component">Name:{@link IdDecl}</span> <span class="component">{@link Arg}</span> <span class="component">{@link Block}</span>;
 
  */
-public class Function extends Expr implements Cloneable {
+public class FuncDecl extends Func implements Cloneable {
   /**
    * @declaredat ASTNode:1
    */
-  public Function() {
+  public FuncDecl() {
     super();
   }
   /**
@@ -31,11 +31,11 @@ public class Function extends Expr implements Cloneable {
    * @declaredat ASTNode:13
    */
   @ASTNodeAnnotation.Constructor(
-    name = {"IdDecl", "Arg", "Block"},
+    name = {"Name", "Arg", "Block"},
     type = {"IdDecl", "Arg", "Block"},
     kind = {"Child", "Child", "Child"}
   )
-  public Function(IdDecl p0, Arg p1, Block p2) {
+  public FuncDecl(IdDecl p0, Arg p1, Block p2) {
     setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
@@ -61,16 +61,16 @@ public class Function extends Expr implements Cloneable {
   /** @apilevel internal 
    * @declaredat ASTNode:36
    */
-  public Function clone() throws CloneNotSupportedException {
-    Function node = (Function) super.clone();
+  public FuncDecl clone() throws CloneNotSupportedException {
+    FuncDecl node = (FuncDecl) super.clone();
     return node;
   }
   /** @apilevel internal 
    * @declaredat ASTNode:41
    */
-  public Function copy() {
+  public FuncDecl copy() {
     try {
-      Function node = (Function) clone();
+      FuncDecl node = (FuncDecl) clone();
       node.parent = null;
       if (children != null) {
         node.children = (ASTNode[]) children.clone();
@@ -89,7 +89,7 @@ public class Function extends Expr implements Cloneable {
    * @declaredat ASTNode:60
    */
   @Deprecated
-  public Function fullCopy() {
+  public FuncDecl fullCopy() {
     return treeCopyNoTransform();
   }
   /**
@@ -99,8 +99,8 @@ public class Function extends Expr implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:70
    */
-  public Function treeCopyNoTransform() {
-    Function tree = (Function) copy();
+  public FuncDecl treeCopyNoTransform() {
+    FuncDecl tree = (FuncDecl) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) children[i];
@@ -120,8 +120,8 @@ public class Function extends Expr implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:90
    */
-  public Function treeCopy() {
-    Function tree = (Function) copy();
+  public FuncDecl treeCopy() {
+    FuncDecl tree = (FuncDecl) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) getChild(i);
@@ -140,29 +140,29 @@ public class Function extends Expr implements Cloneable {
     return super.is$Equal(node);    
   }
   /**
-   * Replaces the IdDecl child.
-   * @param node The new node to replace the IdDecl child.
+   * Replaces the Name child.
+   * @param node The new node to replace the Name child.
    * @apilevel high-level
    */
-  public void setIdDecl(IdDecl node) {
+  public void setName(IdDecl node) {
     setChild(node, 0);
   }
   /**
-   * Retrieves the IdDecl child.
-   * @return The current node used as the IdDecl child.
+   * Retrieves the Name child.
+   * @return The current node used as the Name child.
    * @apilevel high-level
    */
-  @ASTNodeAnnotation.Child(name="IdDecl")
-  public IdDecl getIdDecl() {
+  @ASTNodeAnnotation.Child(name="Name")
+  public IdDecl getName() {
     return (IdDecl) getChild(0);
   }
   /**
-   * Retrieves the IdDecl child.
+   * Retrieves the Name child.
    * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The current node used as the IdDecl child.
+   * @return The current node used as the Name child.
    * @apilevel low-level
    */
-  public IdDecl getIdDeclNoTransform() {
+  public IdDecl getNameNoTransform() {
     return (IdDecl) getChildNoTransform(0);
   }
   /**

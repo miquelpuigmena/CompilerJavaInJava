@@ -12,24 +12,21 @@
 %terminals ID, INT, LEFTBRACKET, RIGHTBRACKET, LEFTPARENTHESIS, RIGHTPARENTHESIS;
 
 %typeof program = "Program";
-%typeof exp = "Expr";
-%typeof function = "Function";
+%typeof func_decl = "FuncDecl";
+%typeof func_list = "List";
 %typeof arg = "Arg";
 %typeof block = "Block";
 
 
 %goal program;
+program = func_list.a {:  return new Program(a); :} ;
 
-program = function_list ;
-
-function_list =
-  function {: return new List().add(function); :}
-  | function_list function  {: return function_list.add(function); :}
+func_list =
+  func_decl.a {: return new List().add(a); :}
+  | func_list.a func_decl.b  {: return a.add(b); :}
   ;
 
-program = exp.a {: return new Program(a); :} ;
-
-function = INT ID.id arg.a block.b {: return new Function(new IdDecl(id),a, b); :} ;
+func_decl = INT ID.id arg.a block.b {: return new FuncDecl(new IdDecl(id), a, b); :} ;
 
 arg = LEFTPARENTHESIS RIGHTPARENTHESIS {: return new Arg(); :} ;
 

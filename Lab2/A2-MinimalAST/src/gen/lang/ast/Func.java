@@ -6,15 +6,15 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/jastadd/lang.ast:3
- * @astdecl Expr : ASTNode;
- * @production Expr : {@link ASTNode};
+ * @astdecl Func : ASTNode;
+ * @production Func : {@link ASTNode};
 
  */
-public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
+public abstract class Func extends ASTNode<ASTNode> implements Cloneable {
   /**
    * @declaredat ASTNode:1
    */
-  public Expr() {
+  public Func() {
     super();
   }
   /**
@@ -47,8 +47,8 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   /** @apilevel internal 
    * @declaredat ASTNode:25
    */
-  public Expr clone() throws CloneNotSupportedException {
-    Expr node = (Expr) super.clone();
+  public Func clone() throws CloneNotSupportedException {
+    Func node = (Func) super.clone();
     return node;
   }
   /**
@@ -60,7 +60,7 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat ASTNode:36
    */
   @Deprecated
-  public abstract Expr fullCopy();
+  public abstract Func fullCopy();
   /**
    * Create a deep copy of the AST subtree at this node.
    * The copy is dangling, i.e. has no parent.
@@ -68,7 +68,7 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:44
    */
-  public abstract Expr treeCopyNoTransform();
+  public abstract Func treeCopyNoTransform();
   /**
    * Create a deep copy of the AST subtree at this node.
    * The subtree of this node is traversed to trigger rewrites before copy.
@@ -77,5 +77,5 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:52
    */
-  public abstract Expr treeCopy();
+  public abstract Func treeCopy();
 }
