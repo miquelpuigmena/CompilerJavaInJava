@@ -18,5 +18,5 @@ public class ParseTests {
 		Util.testSyntaxError(TEST_DIRECTORY, "step1error.in");
 		Util.testSyntaxError(TEST_DIRECTORY, "step2error.in");
 	}
-	
+
 }

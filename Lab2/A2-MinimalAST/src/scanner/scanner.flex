@@ -38,11 +38,23 @@ INT         = int
 {WhiteSpace}  { }
 
 // token definitions
-"="           { return sym(Terminals.EQUALS);  }
+"="           { return sym(Terminals.ASSIGN);  }
 "{"           { return sym(Terminals.LEFTBRACKET);  }
 "}"           { return sym(Terminals.RIGHTBRACKET);  }
 "("           { return sym(Terminals.LEFTPARENTHESIS);  }
 ")"           { return sym(Terminals.RIGHTPARENTHESIS);  }
+"=="		  { return sym(Terminals.EQ);	}
+"!="		  { return sym(Terminals.NE);	}
+">="		  { return sym(Terminals.GE);	}
+">"			  { return sym(Terminals.GT);	}
+"<="		  { return sym(Terminals.LE);	}
+"<"			  { return sym(Terminals.LT); }
+"*"	          { return sym(Terminals.MUL); }
+"/"		      { return sym(Terminals.DIV); }
+"%"		      { return sym(Terminals.MOD); }
+"+"			  { return sym(Terminals.ADD); }
+"-"			  { return sym(Terminals.SUB); }
+","			  { return sym(Terminals.COMMA); }
 ";"           { return sym(Terminals.SEMICOLON);  }
 {NUM}         { return sym(Terminals.NUMERAL);  }
 {INT}         { return sym(Terminals.INT);  }

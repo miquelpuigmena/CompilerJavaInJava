@@ -3,10 +3,9 @@ int a() {
     b=7;
     int j=x;
 }
-int b() {
+int b(int x, int j) {
     int c=3.0;
     d=7;
     int h=x;
 }
-int c() {}
-
+int c(int i) {}

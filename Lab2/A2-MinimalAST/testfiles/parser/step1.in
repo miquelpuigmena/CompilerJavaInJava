@@ -1,4 +1,2 @@
-int a() {}
+int a(int x, int i) {}
 int b() {}
-
-

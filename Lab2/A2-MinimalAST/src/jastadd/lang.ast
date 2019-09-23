@@ -9,7 +9,7 @@ AssgmtStmt      : Stmt      ::= Left:Literal [Right:Literal];
 IdDecl                      ::= <ID:String>;
 IdUse           : Literal   ::= <ID:String>;
 Numeral         : Literal   ::= <NUMERAL:String>;
-Arg                         ::= ;
 StmtList                    ::= Stmt*;
+Arg                         ::= [StmtList];
 Block                       ::= [StmtList];
 

@@ -3,6 +3,7 @@ Program
     FuncDecl
       IdDecl ID="a"
       Arg
+        Opt
       Block
         Opt
           List
@@ -21,6 +22,14 @@ Program
     FuncDecl
       IdDecl ID="b"
       Arg
+        Opt
+          List
+            AssgmtStmt
+              IdUse ID="x"
+              Opt
+            AssgmtStmt
+              IdUse ID="j"
+              Opt
       Block
         Opt
           List
@@ -39,5 +48,10 @@ Program
     FuncDecl
       IdDecl ID="c"
       Arg
+        Opt
+          List
+            AssgmtStmt
+              IdUse ID="i"
+              Opt
       Block
         Opt

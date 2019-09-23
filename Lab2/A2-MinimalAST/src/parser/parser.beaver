@@ -9,20 +9,23 @@
 	}
 :};
 
-%terminals ID, INT, NUMERAL, EQUALS, LEFTBRACKET, RIGHTBRACKET, LEFTPARENTHESIS, RIGHTPARENTHESIS, SEMICOLON;
-
-%typeof program     = "Program";
-%typeof exp_list    = "List";
-%typeof stmt_list   = "List";
-%typeof exp         = "Expr";
-%typeof stmt        = "Stmt";
-%typeof func_decl   = "Expr";
-%typeof arg         = "Arg";
-%typeof assgmt      = "Stmt";
-%typeof block       = "Block";
-%typeof idUse       = "IdUse";
-%typeof numeral     = "Numeral";
-%typeof literal     = "Literal";
+%terminals ID, INT, NUMERAL;
+%terminals LEFTBRACKET, RIGHTBRACKET, LEFTPARENTHESIS, RIGHTPARENTHESIS, COMMA, SEMICOLON;
+%terminals ASSIGN, EQ, NE, GE, GT, LE, LT, MUL, DIV, MOD, ADD, SUB;
+%typeof program         = "Program";
+%typeof exp_list        = "List";
+%typeof stmt_list       = "List";
+%typeof arg_assgmt_list = "List";
+%typeof exp             = "Expr";
+%typeof stmt            = "Stmt";
+%typeof func_decl       = "Expr";
+%typeof arg             = "Arg";
+%typeof arg_assgmt      = "Stmt";
+%typeof assgmt          = "Stmt";
+%typeof block           = "Block";
+%typeof idUse           = "IdUse";
+%typeof numeral         = "Numeral";
+%typeof literal         = "Literal";
 
 
 %goal program;
@@ -42,7 +45,8 @@ func_decl =
     ;
 
 arg =
-    LEFTPARENTHESIS RIGHTPARENTHESIS {: return new Arg(); :}
+    LEFTPARENTHESIS arg_assgmt_list.a RIGHTPARENTHESIS {: return new Arg(new Opt(a)); :}
+    | LEFTPARENTHESIS RIGHTPARENTHESIS {: return new Arg(new Opt()); :}
     ;
 
 block =
@@ -64,11 +68,19 @@ literal =
     | ID.id {: return new IdUse(id); :}
     ;
 
-assgmt =
-    INT ID.left EQUALS literal.right SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt(right)); :}
-    | ID.left EQUALS literal.right SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt(right)); :}
-    | INT ID.left SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt()); :}
+arg_assgmt_list =
+    arg_assgmt.a {: return new List().add(a); :}
+    | arg_assgmt_list.a COMMA arg_assgmt.b {: return a.add(b); :}
+    ;
 
+arg_assgmt =
+    INT ID.id {: return new AssgmtStmt(new IdUse(id), new Opt()); :}
+    ;
+
+assgmt =
+    INT ID.left ASSIGN literal.right SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt(right)); :}
+    | ID.left ASSIGN literal.right SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt(right)); :}
+    | INT ID.left SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt()); :}
     ;
 
 
