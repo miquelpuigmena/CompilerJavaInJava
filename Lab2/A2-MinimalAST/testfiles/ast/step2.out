@@ -1,0 +1,43 @@
+Program
+  List
+    FuncDecl
+      IdDecl ID="a"
+      Arg
+      Block
+        Opt
+          List
+            AssgmtStmt
+              IdUse ID="b"
+              Opt
+                Numeral NUMERAL="3.0"
+            AssgmtStmt
+              IdUse ID="b"
+              Opt
+                Numeral NUMERAL="7"
+            AssgmtStmt
+              IdUse ID="j"
+              Opt
+                IdUse ID="x"
+    FuncDecl
+      IdDecl ID="b"
+      Arg
+      Block
+        Opt
+          List
+            AssgmtStmt
+              IdUse ID="c"
+              Opt
+                Numeral NUMERAL="3.0"
+            AssgmtStmt
+              IdUse ID="d"
+              Opt
+                Numeral NUMERAL="7"
+            AssgmtStmt
+              IdUse ID="h"
+              Opt
+                IdUse ID="x"
+    FuncDecl
+      IdDecl ID="c"
+      Arg
+      Block
+        Opt

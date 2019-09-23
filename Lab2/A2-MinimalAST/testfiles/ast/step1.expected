@@ -4,7 +4,10 @@ Program
       IdDecl ID="a"
       Arg
       Block
+        Opt
     FuncDecl
       IdDecl ID="b"
       Arg
       Block
+        Opt
+

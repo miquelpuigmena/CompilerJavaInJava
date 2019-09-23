@@ -27,9 +27,10 @@ import lang.ast.LangParser.SyntaxError;
 %}
 
 // macros
-WhiteSpace = [ ] | \t | \f | \n | \r
-ID = [a-zA-Z]+
-INT = int
+WhiteSpace  = [ ] | \t | \f | \n | \r
+ID          = [a-zA-Z]+
+NUM         = [0-9]+([.][0-9]*)?
+INT         = int
 
 %%
 
@@ -37,10 +38,13 @@ INT = int
 {WhiteSpace}  { }
 
 // token definitions
+"="           { return sym(Terminals.EQUALS);  }
 "{"           { return sym(Terminals.LEFTBRACKET);  }
 "}"           { return sym(Terminals.RIGHTBRACKET);  }
 "("           { return sym(Terminals.LEFTPARENTHESIS);  }
 ")"           { return sym(Terminals.RIGHTPARENTHESIS);  }
+";"           { return sym(Terminals.SEMICOLON);  }
+{NUM}         { return sym(Terminals.NUMERAL);  }
 {INT}         { return sym(Terminals.INT);  }
 {ID}          { return sym(Terminals.ID);  }
 <<EOF>>       { return sym(Terminals.EOF); }

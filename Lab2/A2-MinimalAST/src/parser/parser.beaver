@@ -9,25 +9,67 @@
 	}
 :};
 
-%terminals ID, INT, LEFTBRACKET, RIGHTBRACKET, LEFTPARENTHESIS, RIGHTPARENTHESIS;
+%terminals ID, INT, NUMERAL, EQUALS, LEFTBRACKET, RIGHTBRACKET, LEFTPARENTHESIS, RIGHTPARENTHESIS, SEMICOLON;
 
-%typeof program = "Program";
-%typeof func_decl = "FuncDecl";
-%typeof func_list = "List";
-%typeof arg = "Arg";
-%typeof block = "Block";
+%typeof program     = "Program";
+%typeof exp_list    = "List";
+%typeof stmt_list   = "List";
+%typeof exp         = "Expr";
+%typeof stmt        = "Stmt";
+%typeof func_decl   = "Expr";
+%typeof arg         = "Arg";
+%typeof assgmt      = "Stmt";
+%typeof block       = "Block";
+%typeof idUse       = "IdUse";
+%typeof numeral     = "Numeral";
+%typeof literal     = "Literal";
 
 
 %goal program;
-program = func_list.a {:  return new Program(a); :} ;
+program = exp_list.a {:  return new Program(a); :} ;
 
-func_list =
-  func_decl.a {: return new List().add(a); :}
-  | func_list.a func_decl.b  {: return a.add(b); :}
-  ;
+exp_list =
+    exp.a {: return new List().add(a); :}
+    | exp_list.a exp.b  {: return a.add(b); :}
+    ;
 
-func_decl = INT ID.id arg.a block.b {: return new FuncDecl(new IdDecl(id), a, b); :} ;
+exp =
+    func_decl
+    ;
 
-arg = LEFTPARENTHESIS RIGHTPARENTHESIS {: return new Arg(); :} ;
+func_decl =
+    INT ID.id arg.a block.b {: return new FuncDecl(new IdDecl(id), a, b); :}
+    ;
 
-block = LEFTBRACKET RIGHTBRACKET {: return new Block(); :} ;
+arg =
+    LEFTPARENTHESIS RIGHTPARENTHESIS {: return new Arg(); :}
+    ;
+
+block =
+    LEFTBRACKET stmt_list.a RIGHTBRACKET {: return new Block(new Opt(a)); :}
+    | LEFTBRACKET RIGHTBRACKET {: return new Block(new Opt()); :}
+    ;
+
+stmt_list =
+    stmt.a {: return new List().add(a); :}
+    | stmt_list.a stmt.b {: return a.add(b); :}
+    ;
+
+stmt =
+    assgmt
+    ;
+
+literal =
+    NUMERAL.n {: return new Numeral(n); :}
+    | ID.id {: return new IdUse(id); :}
+    ;
+
+assgmt =
+    INT ID.left EQUALS literal.right SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt(right)); :}
+    | ID.left EQUALS literal.right SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt(right)); :}
+    | INT ID.left SEMICOLON {: return new AssgmtStmt(new IdUse(left), new Opt()); :}
+
+    ;
+
+
+

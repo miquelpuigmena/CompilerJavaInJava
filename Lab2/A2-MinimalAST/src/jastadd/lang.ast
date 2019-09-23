@@ -1,10 +1,15 @@
-Program ::= Func*;
+Program ::= Expr*;
 
-abstract Func;
+abstract Expr;
+abstract Stmt;
+abstract Literal;
 
-FuncDecl: Func ::= Name:IdDecl Arg Block;
-IdDecl  ::= <ID:String>;
-Int     ::= <INT:String>;
-Arg     ::= ;
-Block   ::= ;
+FuncDecl        : Expr      ::= Name:IdDecl Arg Block;
+AssgmtStmt      : Stmt      ::= Left:Literal [Right:Literal];
+IdDecl                      ::= <ID:String>;
+IdUse           : Literal   ::= <ID:String>;
+Numeral         : Literal   ::= <NUMERAL:String>;
+Arg                         ::= ;
+StmtList                    ::= Stmt*;
+Block                       ::= [StmtList];
 
