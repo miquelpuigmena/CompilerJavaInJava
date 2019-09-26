@@ -1,15 +1,38 @@
-Program ::= Expr*;
+Program ::= Stmt*;
 
-abstract Expr;
 abstract Stmt;
-abstract Literal;
+abstract Expr       : Stmt;
+abstract Factor     : Expr;
 
-FuncDecl        : Expr      ::= Name:IdDecl Arg Block;
-AssgmtStmt      : Stmt      ::= Left:Literal [Right:Literal];
-IdDecl                      ::= <ID:String>;
-IdUse           : Literal   ::= <ID:String>;
-Numeral         : Literal   ::= <NUMERAL:String>;
-StmtList                    ::= Stmt*;
-Arg                         ::= [StmtList];
-Block                       ::= [StmtList];
+Block                               ::= Stmt*;
 
+Func                : Stmt          ::= decl:IdDecl args:FuncArgs block:Block;
+FuncArgs                            ::= IdUse*;
+FuncCall            : Expr          ::= name:IdDecl args:FuncCallArgs;
+FuncCallArgs                        ::= Expr*;
+
+AssigmtStmt         : Stmt          ::= left:IdDecl [right:Expr];
+ReturnStmt          : Stmt          ::= Expr;
+Condition           : Expr          ::= Expr;
+WhileStmt           : Stmt          ::= condition:Expr block:Block;
+IfStmt              : Stmt          ::= condition:Expr block:Block elif:ElseIfStmts [else:ElseStmt];
+ElseIfStmt          : Stmt          ::= condition:Expr block:Block;
+ElseIfStmts                         ::= ElseIfStmt*;
+ElseStmt            : Stmt          ::= block:Block;
+
+IdUse               : Factor        ::= <ID:String>;
+Numeral             : Factor        ::= <NUMERAL:String>;
+IdDecl              : Expr          ::= <ID:String>;
+
+abstract BinaryExpr : Expr          ::= left:Expr right:Expr;
+Add : BinaryExpr;
+Sub : BinaryExpr;
+Mul : BinaryExpr;
+Div : BinaryExpr;
+Mod : BinaryExpr;
+GT  : BinaryExpr;
+LT  : BinaryExpr;
+GE  : BinaryExpr;
+LE  : BinaryExpr;
+EQ  : BinaryExpr;
+NE  : BinaryExpr;

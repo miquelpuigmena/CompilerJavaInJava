@@ -1,0 +1,30 @@
+
+> Task :generateParser
+Welcome to NeoBeaver classic frontend!
+
+> Task :generateScanner
+Reading "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/scanner/scanner.flex"
+Constructing NFA : 123 states in NFA
+Converting NFA to DFA : 
+..................................................
+52 states before minimization, 47 states in minimized DFA
+Old file "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/gen/lang/ast/LangScanner.java" saved as "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/gen/lang/ast/LangScanner.java~"
+Writing code to "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/gen/lang/ast/LangScanner.java"
+
+BUILD SUCCESSFUL in 1s
+5 actionable tasks: 2 executed, 3 up-to-date
+
+> Task :generateParser
+Welcome to NeoBeaver classic frontend!
+
+> Task :generateScanner
+Reading "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/scanner/scanner.flex"
+Constructing NFA : 123 states in NFA
+Converting NFA to DFA : 
+..................................................
+52 states before minimization, 47 states in minimized DFA
+Old file "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/gen/lang/ast/LangScanner.java" saved as "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/gen/lang/ast/LangScanner.java~"
+Writing code to "/home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/gen/lang/ast/LangScanner.java"
+
+BUILD SUCCESSFUL in 1s
+5 actionable tasks: 2 executed, 3 up-to-date

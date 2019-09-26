@@ -1,7 +1,9 @@
 int a() {
-    int b=3.0;
+    int b=2;
     b=7;
     int j=x;
+    b ()
+
 }
 int b(int x, int j) {
     int c=3.0;
@@ -9,5 +11,3 @@ int b(int x, int j) {
     int h=x;
 }
 int c(int i) {}
-andAnother();
-

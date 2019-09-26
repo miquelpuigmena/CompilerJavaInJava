@@ -1,0 +1,8 @@
+int f() {
+  return --x+3 * -2;
+  if(a==2){
+  return 2;
+  } elseif(b==3) {
+   nothing =2;
+  }
+  }
