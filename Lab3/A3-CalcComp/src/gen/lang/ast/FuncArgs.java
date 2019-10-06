@@ -1,16 +1,34 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version 2.3.2 */
 package lang.ast;
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Optional;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/jastadd/lang.ast:10
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/lang.ast:11
  * @astdecl FuncArgs : ASTNode ::= IdDecl*;
  * @production FuncArgs : {@link ASTNode} ::= <span class="component">{@link IdDecl}*</span>;
 
  */
 public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
+  /**
+   * @aspect Visitor
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/Visitor.jrag:84
+   */
+  public Object accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+  /**
+   * @aspect NameAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/NameAnalysis.jrag:78
+   */
+  public void checkNames(PrintStream err, SymbolTable symbols) {
+        getIdDecls().checkNamesLoop(err, symbols);
+    }
   /**
    * @declaredat ASTNode:1
    */

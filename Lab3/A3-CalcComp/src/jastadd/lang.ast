@@ -1,0 +1,42 @@
+Program ::= Stmt*;
+
+abstract Stmt;
+abstract Expr       : Stmt;
+abstract Atomic     : Expr;
+abstract Call       : Expr;
+
+Block                               ::= Stmt*;
+
+Func                : Stmt          ::= Decl:IdDecl Args:FuncArgs Block:Block;
+FuncArgs                            ::= IdDecl*;
+FuncDefault         : Call          ::= Func:DefFunc Args:FuncCallArgs;
+FuncCall            : Call          ::= ID:IdUse Args:FuncCallArgs;
+FuncCallArgs                        ::= IdUse*;
+
+AssigmtStmt         : Stmt          ::= Left:IdDecl [Right:Expr];
+AssigmtUse          : Stmt          ::= Left:IdUse  Right:Expr;
+ReturnStmt          : Stmt          ::= Return:Expr;
+Condition           : Expr          ::= Condition:Expr;
+WhileStmt           : Stmt          ::= Condition:Expr Then:Block;
+IfStmt              : Stmt          ::= Condition:Expr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
+ElseIfStmt          : Stmt          ::= Condition:Expr Then:Block;
+ElseIfStmts                         ::= ElseIfStmt*;
+ElseStmt            : Stmt          ::= Block:Block;
+
+DefFunc             : Atomic        ::= <DEF_FUNC:String>;
+IdUse               : Atomic        ::= <ID:String>;
+Numeral             : Atomic        ::= <NUMERAL:String>;
+IdDecl              : Atomic        ::= <ID:String>;
+
+abstract BinaryExpr : Expr          ::= Left:Expr Right:Expr;
+Add : BinaryExpr;
+Sub : BinaryExpr;
+Mul : BinaryExpr;
+Div : BinaryExpr;
+Mod : BinaryExpr;
+GT  : BinaryExpr;
+LT  : BinaryExpr;
+GE  : BinaryExpr;
+LE  : BinaryExpr;
+EQ  : BinaryExpr;
+NE  : BinaryExpr;

@@ -1,20 +1,39 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version 2.3.2 */
 package lang.ast;
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Optional;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/jastadd/lang.ast:10
- * @astdecl FuncArgs : ASTNode ::= IdDecl*;
- * @production FuncArgs : {@link ASTNode} ::= <span class="component">{@link IdDecl}*</span>;
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/lang.ast:8
+ * @astdecl Block : ASTNode ::= Stmt*;
+ * @production Block : {@link ASTNode} ::= <span class="component">{@link Stmt}*</span>;
 
  */
-public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
+public class Block extends ASTNode<ASTNode> implements Cloneable {
+  /**
+   * @aspect Visitor
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/Visitor.jrag:63
+   */
+  public Object accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+  /**
+   * @aspect NameAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/NameAnalysis.jrag:82
+   */
+  public void checkNames(PrintStream err, SymbolTable symbols) {
+        SymbolTable block_symbols = symbols.push();
+        getStmts().checkNamesLoop(err, block_symbols);
+    }
   /**
    * @declaredat ASTNode:1
    */
-  public FuncArgs() {
+  public Block() {
     super();
   }
   /**
@@ -32,11 +51,11 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat ASTNode:14
    */
   @ASTNodeAnnotation.Constructor(
-    name = {"IdDecl"},
-    type = {"List<IdDecl>"},
+    name = {"Stmt"},
+    type = {"List<Stmt>"},
     kind = {"List"}
   )
-  public FuncArgs(List<IdDecl> p0) {
+  public Block(List<Stmt> p0) {
     setChild(p0, 0);
   }
   /** @apilevel low-level 
@@ -60,16 +79,16 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
   /** @apilevel internal 
    * @declaredat ASTNode:35
    */
-  public FuncArgs clone() throws CloneNotSupportedException {
-    FuncArgs node = (FuncArgs) super.clone();
+  public Block clone() throws CloneNotSupportedException {
+    Block node = (Block) super.clone();
     return node;
   }
   /** @apilevel internal 
    * @declaredat ASTNode:40
    */
-  public FuncArgs copy() {
+  public Block copy() {
     try {
-      FuncArgs node = (FuncArgs) clone();
+      Block node = (Block) clone();
       node.parent = null;
       if (children != null) {
         node.children = (ASTNode[]) children.clone();
@@ -88,7 +107,7 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat ASTNode:59
    */
   @Deprecated
-  public FuncArgs fullCopy() {
+  public Block fullCopy() {
     return treeCopyNoTransform();
   }
   /**
@@ -98,8 +117,8 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:69
    */
-  public FuncArgs treeCopyNoTransform() {
-    FuncArgs tree = (FuncArgs) copy();
+  public Block treeCopyNoTransform() {
+    Block tree = (Block) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) children[i];
@@ -119,8 +138,8 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:89
    */
-  public FuncArgs treeCopy() {
-    FuncArgs tree = (FuncArgs) copy();
+  public Block treeCopy() {
+    Block tree = (Block) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) getChild(i);
@@ -139,113 +158,113 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
     return super.is$Equal(node);    
   }
   /**
-   * Replaces the IdDecl list.
-   * @param list The new list node to be used as the IdDecl list.
+   * Replaces the Stmt list.
+   * @param list The new list node to be used as the Stmt list.
    * @apilevel high-level
    */
-  public void setIdDeclList(List<IdDecl> list) {
+  public void setStmtList(List<Stmt> list) {
     setChild(list, 0);
   }
   /**
-   * Retrieves the number of children in the IdDecl list.
-   * @return Number of children in the IdDecl list.
+   * Retrieves the number of children in the Stmt list.
+   * @return Number of children in the Stmt list.
    * @apilevel high-level
    */
-  public int getNumIdDecl() {
-    return getIdDeclList().getNumChild();
+  public int getNumStmt() {
+    return getStmtList().getNumChild();
   }
   /**
-   * Retrieves the number of children in the IdDecl list.
+   * Retrieves the number of children in the Stmt list.
    * Calling this method will not trigger rewrites.
-   * @return Number of children in the IdDecl list.
+   * @return Number of children in the Stmt list.
    * @apilevel low-level
    */
-  public int getNumIdDeclNoTransform() {
-    return getIdDeclListNoTransform().getNumChildNoTransform();
+  public int getNumStmtNoTransform() {
+    return getStmtListNoTransform().getNumChildNoTransform();
   }
   /**
-   * Retrieves the element at index {@code i} in the IdDecl list.
+   * Retrieves the element at index {@code i} in the Stmt list.
    * @param i Index of the element to return.
-   * @return The element at position {@code i} in the IdDecl list.
+   * @return The element at position {@code i} in the Stmt list.
    * @apilevel high-level
    */
-  public IdDecl getIdDecl(int i) {
-    return (IdDecl) getIdDeclList().getChild(i);
+  public Stmt getStmt(int i) {
+    return (Stmt) getStmtList().getChild(i);
   }
   /**
-   * Check whether the IdDecl list has any children.
+   * Check whether the Stmt list has any children.
    * @return {@code true} if it has at least one child, {@code false} otherwise.
    * @apilevel high-level
    */
-  public boolean hasIdDecl() {
-    return getIdDeclList().getNumChild() != 0;
+  public boolean hasStmt() {
+    return getStmtList().getNumChild() != 0;
   }
   /**
-   * Append an element to the IdDecl list.
-   * @param node The element to append to the IdDecl list.
+   * Append an element to the Stmt list.
+   * @param node The element to append to the Stmt list.
    * @apilevel high-level
    */
-  public void addIdDecl(IdDecl node) {
-    List<IdDecl> list = (parent == null) ? getIdDeclListNoTransform() : getIdDeclList();
+  public void addStmt(Stmt node) {
+    List<Stmt> list = (parent == null) ? getStmtListNoTransform() : getStmtList();
     list.addChild(node);
   }
   /** @apilevel low-level 
    */
-  public void addIdDeclNoTransform(IdDecl node) {
-    List<IdDecl> list = getIdDeclListNoTransform();
+  public void addStmtNoTransform(Stmt node) {
+    List<Stmt> list = getStmtListNoTransform();
     list.addChild(node);
   }
   /**
-   * Replaces the IdDecl list element at index {@code i} with the new node {@code node}.
+   * Replaces the Stmt list element at index {@code i} with the new node {@code node}.
    * @param node The new node to replace the old list element.
    * @param i The list index of the node to be replaced.
    * @apilevel high-level
    */
-  public void setIdDecl(IdDecl node, int i) {
-    List<IdDecl> list = getIdDeclList();
+  public void setStmt(Stmt node, int i) {
+    List<Stmt> list = getStmtList();
     list.setChild(node, i);
   }
   /**
-   * Retrieves the IdDecl list.
-   * @return The node representing the IdDecl list.
+   * Retrieves the Stmt list.
+   * @return The node representing the Stmt list.
    * @apilevel high-level
    */
-  @ASTNodeAnnotation.ListChild(name="IdDecl")
-  public List<IdDecl> getIdDeclList() {
-    List<IdDecl> list = (List<IdDecl>) getChild(0);
+  @ASTNodeAnnotation.ListChild(name="Stmt")
+  public List<Stmt> getStmtList() {
+    List<Stmt> list = (List<Stmt>) getChild(0);
     return list;
   }
   /**
-   * Retrieves the IdDecl list.
+   * Retrieves the Stmt list.
    * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The node representing the IdDecl list.
+   * @return The node representing the Stmt list.
    * @apilevel low-level
    */
-  public List<IdDecl> getIdDeclListNoTransform() {
-    return (List<IdDecl>) getChildNoTransform(0);
+  public List<Stmt> getStmtListNoTransform() {
+    return (List<Stmt>) getChildNoTransform(0);
   }
   /**
-   * @return the element at index {@code i} in the IdDecl list without
+   * @return the element at index {@code i} in the Stmt list without
    * triggering rewrites.
    */
-  public IdDecl getIdDeclNoTransform(int i) {
-    return (IdDecl) getIdDeclListNoTransform().getChildNoTransform(i);
+  public Stmt getStmtNoTransform(int i) {
+    return (Stmt) getStmtListNoTransform().getChildNoTransform(i);
   }
   /**
-   * Retrieves the IdDecl list.
-   * @return The node representing the IdDecl list.
+   * Retrieves the Stmt list.
+   * @return The node representing the Stmt list.
    * @apilevel high-level
    */
-  public List<IdDecl> getIdDecls() {
-    return getIdDeclList();
+  public List<Stmt> getStmts() {
+    return getStmtList();
   }
   /**
-   * Retrieves the IdDecl list.
+   * Retrieves the Stmt list.
    * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The node representing the IdDecl list.
+   * @return The node representing the Stmt list.
    * @apilevel low-level
    */
-  public List<IdDecl> getIdDeclsNoTransform() {
-    return getIdDeclListNoTransform();
+  public List<Stmt> getStmtsNoTransform() {
+    return getStmtListNoTransform();
   }
 }

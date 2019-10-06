@@ -1,20 +1,38 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version 2.3.2 */
 package lang.ast;
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Optional;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab2/A2-MinimalAST/src/jastadd/lang.ast:10
- * @astdecl FuncArgs : ASTNode ::= IdDecl*;
- * @production FuncArgs : {@link ASTNode} ::= <span class="component">{@link IdDecl}*</span>;
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/lang.ast:23
+ * @astdecl ElseIfStmts : ASTNode ::= ElseIfStmt*;
+ * @production ElseIfStmts : {@link ASTNode} ::= <span class="component">{@link ElseIfStmt}*</span>;
 
  */
-public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
+public class ElseIfStmts extends ASTNode<ASTNode> implements Cloneable {
+  /**
+   * @aspect Visitor
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/Visitor.jrag:111
+   */
+  public Object accept(Visitor visitor, Object data) {
+		return visitor.visit(this, data);
+	}
+  /**
+   * @aspect NameAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab3/A3-CalcComp/src/jastadd/NameAnalysis.jrag:130
+   */
+  public void checkNames(PrintStream err, SymbolTable symbols) {
+        getElseIfStmts().checkNamesLoop(err, symbols);
+    }
   /**
    * @declaredat ASTNode:1
    */
-  public FuncArgs() {
+  public ElseIfStmts() {
     super();
   }
   /**
@@ -32,11 +50,11 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat ASTNode:14
    */
   @ASTNodeAnnotation.Constructor(
-    name = {"IdDecl"},
-    type = {"List<IdDecl>"},
+    name = {"ElseIfStmt"},
+    type = {"List<ElseIfStmt>"},
     kind = {"List"}
   )
-  public FuncArgs(List<IdDecl> p0) {
+  public ElseIfStmts(List<ElseIfStmt> p0) {
     setChild(p0, 0);
   }
   /** @apilevel low-level 
@@ -60,16 +78,16 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
   /** @apilevel internal 
    * @declaredat ASTNode:35
    */
-  public FuncArgs clone() throws CloneNotSupportedException {
-    FuncArgs node = (FuncArgs) super.clone();
+  public ElseIfStmts clone() throws CloneNotSupportedException {
+    ElseIfStmts node = (ElseIfStmts) super.clone();
     return node;
   }
   /** @apilevel internal 
    * @declaredat ASTNode:40
    */
-  public FuncArgs copy() {
+  public ElseIfStmts copy() {
     try {
-      FuncArgs node = (FuncArgs) clone();
+      ElseIfStmts node = (ElseIfStmts) clone();
       node.parent = null;
       if (children != null) {
         node.children = (ASTNode[]) children.clone();
@@ -88,7 +106,7 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat ASTNode:59
    */
   @Deprecated
-  public FuncArgs fullCopy() {
+  public ElseIfStmts fullCopy() {
     return treeCopyNoTransform();
   }
   /**
@@ -98,8 +116,8 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:69
    */
-  public FuncArgs treeCopyNoTransform() {
-    FuncArgs tree = (FuncArgs) copy();
+  public ElseIfStmts treeCopyNoTransform() {
+    ElseIfStmts tree = (ElseIfStmts) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) children[i];
@@ -119,8 +137,8 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel low-level
    * @declaredat ASTNode:89
    */
-  public FuncArgs treeCopy() {
-    FuncArgs tree = (FuncArgs) copy();
+  public ElseIfStmts treeCopy() {
+    ElseIfStmts tree = (ElseIfStmts) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) getChild(i);
@@ -139,113 +157,113 @@ public class FuncArgs extends ASTNode<ASTNode> implements Cloneable {
     return super.is$Equal(node);    
   }
   /**
-   * Replaces the IdDecl list.
-   * @param list The new list node to be used as the IdDecl list.
+   * Replaces the ElseIfStmt list.
+   * @param list The new list node to be used as the ElseIfStmt list.
    * @apilevel high-level
    */
-  public void setIdDeclList(List<IdDecl> list) {
+  public void setElseIfStmtList(List<ElseIfStmt> list) {
     setChild(list, 0);
   }
   /**
-   * Retrieves the number of children in the IdDecl list.
-   * @return Number of children in the IdDecl list.
+   * Retrieves the number of children in the ElseIfStmt list.
+   * @return Number of children in the ElseIfStmt list.
    * @apilevel high-level
    */
-  public int getNumIdDecl() {
-    return getIdDeclList().getNumChild();
+  public int getNumElseIfStmt() {
+    return getElseIfStmtList().getNumChild();
   }
   /**
-   * Retrieves the number of children in the IdDecl list.
+   * Retrieves the number of children in the ElseIfStmt list.
    * Calling this method will not trigger rewrites.
-   * @return Number of children in the IdDecl list.
+   * @return Number of children in the ElseIfStmt list.
    * @apilevel low-level
    */
-  public int getNumIdDeclNoTransform() {
-    return getIdDeclListNoTransform().getNumChildNoTransform();
+  public int getNumElseIfStmtNoTransform() {
+    return getElseIfStmtListNoTransform().getNumChildNoTransform();
   }
   /**
-   * Retrieves the element at index {@code i} in the IdDecl list.
+   * Retrieves the element at index {@code i} in the ElseIfStmt list.
    * @param i Index of the element to return.
-   * @return The element at position {@code i} in the IdDecl list.
+   * @return The element at position {@code i} in the ElseIfStmt list.
    * @apilevel high-level
    */
-  public IdDecl getIdDecl(int i) {
-    return (IdDecl) getIdDeclList().getChild(i);
+  public ElseIfStmt getElseIfStmt(int i) {
+    return (ElseIfStmt) getElseIfStmtList().getChild(i);
   }
   /**
-   * Check whether the IdDecl list has any children.
+   * Check whether the ElseIfStmt list has any children.
    * @return {@code true} if it has at least one child, {@code false} otherwise.
    * @apilevel high-level
    */
-  public boolean hasIdDecl() {
-    return getIdDeclList().getNumChild() != 0;
+  public boolean hasElseIfStmt() {
+    return getElseIfStmtList().getNumChild() != 0;
   }
   /**
-   * Append an element to the IdDecl list.
-   * @param node The element to append to the IdDecl list.
+   * Append an element to the ElseIfStmt list.
+   * @param node The element to append to the ElseIfStmt list.
    * @apilevel high-level
    */
-  public void addIdDecl(IdDecl node) {
-    List<IdDecl> list = (parent == null) ? getIdDeclListNoTransform() : getIdDeclList();
+  public void addElseIfStmt(ElseIfStmt node) {
+    List<ElseIfStmt> list = (parent == null) ? getElseIfStmtListNoTransform() : getElseIfStmtList();
     list.addChild(node);
   }
   /** @apilevel low-level 
    */
-  public void addIdDeclNoTransform(IdDecl node) {
-    List<IdDecl> list = getIdDeclListNoTransform();
+  public void addElseIfStmtNoTransform(ElseIfStmt node) {
+    List<ElseIfStmt> list = getElseIfStmtListNoTransform();
     list.addChild(node);
   }
   /**
-   * Replaces the IdDecl list element at index {@code i} with the new node {@code node}.
+   * Replaces the ElseIfStmt list element at index {@code i} with the new node {@code node}.
    * @param node The new node to replace the old list element.
    * @param i The list index of the node to be replaced.
    * @apilevel high-level
    */
-  public void setIdDecl(IdDecl node, int i) {
-    List<IdDecl> list = getIdDeclList();
+  public void setElseIfStmt(ElseIfStmt node, int i) {
+    List<ElseIfStmt> list = getElseIfStmtList();
     list.setChild(node, i);
   }
   /**
-   * Retrieves the IdDecl list.
-   * @return The node representing the IdDecl list.
+   * Retrieves the ElseIfStmt list.
+   * @return The node representing the ElseIfStmt list.
    * @apilevel high-level
    */
-  @ASTNodeAnnotation.ListChild(name="IdDecl")
-  public List<IdDecl> getIdDeclList() {
-    List<IdDecl> list = (List<IdDecl>) getChild(0);
+  @ASTNodeAnnotation.ListChild(name="ElseIfStmt")
+  public List<ElseIfStmt> getElseIfStmtList() {
+    List<ElseIfStmt> list = (List<ElseIfStmt>) getChild(0);
     return list;
   }
   /**
-   * Retrieves the IdDecl list.
+   * Retrieves the ElseIfStmt list.
    * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The node representing the IdDecl list.
+   * @return The node representing the ElseIfStmt list.
    * @apilevel low-level
    */
-  public List<IdDecl> getIdDeclListNoTransform() {
-    return (List<IdDecl>) getChildNoTransform(0);
+  public List<ElseIfStmt> getElseIfStmtListNoTransform() {
+    return (List<ElseIfStmt>) getChildNoTransform(0);
   }
   /**
-   * @return the element at index {@code i} in the IdDecl list without
+   * @return the element at index {@code i} in the ElseIfStmt list without
    * triggering rewrites.
    */
-  public IdDecl getIdDeclNoTransform(int i) {
-    return (IdDecl) getIdDeclListNoTransform().getChildNoTransform(i);
+  public ElseIfStmt getElseIfStmtNoTransform(int i) {
+    return (ElseIfStmt) getElseIfStmtListNoTransform().getChildNoTransform(i);
   }
   /**
-   * Retrieves the IdDecl list.
-   * @return The node representing the IdDecl list.
+   * Retrieves the ElseIfStmt list.
+   * @return The node representing the ElseIfStmt list.
    * @apilevel high-level
    */
-  public List<IdDecl> getIdDecls() {
-    return getIdDeclList();
+  public List<ElseIfStmt> getElseIfStmts() {
+    return getElseIfStmtList();
   }
   /**
-   * Retrieves the IdDecl list.
+   * Retrieves the ElseIfStmt list.
    * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The node representing the IdDecl list.
+   * @return The node representing the ElseIfStmt list.
    * @apilevel low-level
    */
-  public List<IdDecl> getIdDeclsNoTransform() {
-    return getIdDeclListNoTransform();
+  public List<ElseIfStmt> getElseIfStmtsNoTransform() {
+    return getElseIfStmtListNoTransform();
   }
 }

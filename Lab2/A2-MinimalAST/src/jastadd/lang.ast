@@ -7,7 +7,7 @@ abstract Factor     : Expr;
 Block                               ::= Stmt*;
 
 Func                : Stmt          ::= decl:IdDecl args:FuncArgs block:Block;
-FuncArgs                            ::= IdUse*;
+FuncArgs                            ::= IdDecl*;
 FuncCall            : Expr          ::= name:IdDecl args:FuncCallArgs;
 FuncCallArgs                        ::= Expr*;
 
