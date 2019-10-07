@@ -2,6 +2,7 @@ import java.io.PrintStream;
 
 aspect PrettyPrint {
 	public static String ASTNode.INDENTATION = "  ";
+	public static String ASTNode.MIN = " *** MINUMUM ***";
 
 	public void ASTNode.prettyPrint(PrintStream out) {
 		prettyPrint(out, "");
@@ -26,6 +27,9 @@ aspect PrettyPrint {
 	}
 	public void Leaf.prettyPrint(PrintStream out, String ind) {
 		out.print(ind);
-		out.println("Leaf " + getNumber());
+		String min = "";
+		if(isMinValue())
+			min = MIN;
+		out.println("Leaf " + getNumber() + min);
 	}
 }

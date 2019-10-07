@@ -1,18 +1,32 @@
 aspect MinValue {
 	// Exercise 1
 	syn int Node.localMin() = 0;
-    eq Leaf.localMin() = getNumber();
-    eq Pair.localMin() {
-        return Math.min(getLeft().localMin(), getRight().localMin()) ;
-    }
+	eq Leaf.localMin() = getNumber();
+	eq Pair.localMin() {
+		return getLeft().localMin() < getRight().localMin() ?
+			getLeft().localMin() : getRight().localMin();
+	}
+
 	// Exercise 2
 	inh int Node.globalMin();
-	eq Program.getNode().globalMin() = 0;
+	eq Program.getNode().globalMin() {
+		return getNode().localMin();
+	}
 
 	// Exercise 3
-	syn boolean Leaf.isMinValue() = false;
-	
+	syn boolean Leaf.isMinValue() {
+		return localMin() == globalMin();
+	}
+
 	// Exercise 4
-	syn int Program.nbrOfMinValues() = 0;
-	syn int Node.nbrOfMinValues() = 0;
+	syn int Program.nbrOfMinValues() {
+		return getNode().nbrOfMinValues();
+	}
+	syn int Node.nbrOfMinValues() = 0;  
+	syn int Pair.nbrOfMinValues() {
+		return getLeft().nbrOfMinValues() + getRight().nbrOfMinValues();
+	}
+	syn int Leaf.nbrOfMinValues() {
+		return localMin() == globalMin() ? 1 : 0;
+	}
 }
