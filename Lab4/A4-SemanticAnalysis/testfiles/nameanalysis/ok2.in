@@ -1,0 +1,6 @@
+int g() {
+b();
+g();
+print(ja);
+return read(1);
+}

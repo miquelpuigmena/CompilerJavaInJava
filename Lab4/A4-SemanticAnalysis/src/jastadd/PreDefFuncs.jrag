@@ -1,0 +1,8 @@
+aspect PreDefFuncs {
+	syn nta List<Func> Program.PreDefFuncs() {
+		List<Func> list = new List<Func>();
+		list.add(new Func(new IdDecl("read"), new FuncArgs(), new Block(new List())));
+		list.add(new Func(new IdDecl("print"), new FuncArgs(new List(new IdDecl("string"))), new Block(new List())));
+		return list;
+	}
+}

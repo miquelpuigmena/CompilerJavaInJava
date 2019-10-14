@@ -1,0 +1,195 @@
+import java.io.PrintStream;
+import java.util.Optional;
+import java.util.Iterator;
+
+aspect PrettyPrint {
+    public static final String ASTNode.TAB = "  ";
+
+	public void ASTNode.prettyPrint(PrintStream out) {
+		prettyPrint(out, "");
+		out.println();
+	}
+
+	public void ASTNode.prettyPrint(PrintStream out, String ind) {
+	    for (ASTNode child : astChildren()) {
+		  child.prettyPrint(out, ind);
+		}
+	}
+
+	public void Program.prettyPrint(PrintStream out, String ind){
+	    getFuncs().printLoop(out, "", Optional.empty());
+	}
+
+/* -- Statements --- */
+
+	public void Func.prettyPrint(PrintStream out, String ind){
+	    out.print(ind);
+		getDecl().prettyPrint(out, ind);
+		out.print(" (");
+		if(getArgs().hasIdDecl()) {
+		    getArgs().getIdDecls().printLoop(out, "", Optional.of(", "));
+        }
+		out.println(") {");
+		getBlock().getStmts().printLoop(out, ind+TAB, Optional.of(";\n"));
+		out.println(ind+"}");
+		out.println();
+	}
+
+	public void AssigmtStmt.prettyPrint(PrintStream out, String ind){
+		out.print(ind);
+		getLeft().prettyPrint(out, ind);
+		if(hasRight()){
+		    Expr right = getRight();
+            out.print(" = ");
+            if(FuncCall.class.isInstance(right)){
+                ind = "";
+            }
+            getRight().prettyPrint(out, ind);
+		}
+	}
+
+	public void AssigmtUse.prettyPrint(PrintStream out, String ind){
+		out.print(ind);
+		getLeft().prettyPrint(out, ind);
+		out.print(" = ");
+		Expr right = getRight();
+		if(!FuncCall.class.isInstance(right)){
+		    right.prettyPrint(out, ind);
+            out.println(";");
+		} else {
+		    right.prettyPrint(out, "");
+		}
+	}
+
+	public void IfStmt.prettyPrint(PrintStream out, String ind){
+		out.print(ind+"if(");
+		getCondition().prettyPrint(out, ind);
+		out.println(") {");
+		getThen().getStmts().printLoop(out, ind+TAB, Optional.empty());
+        if(getElif().hasElseIfStmt()) {
+            for(ElseIfStmt elseif: getElif().getElseIfStmts()) {
+                out.print(ind+"} elseif (");
+                elseif.getCondition().prettyPrint(out, ind);
+                out.println(") {");
+                elseif.getThen().getStmts().printLoop(out, ind+TAB, Optional.empty());
+                out.println(ind+"}");
+            }
+		}
+		if(hasElse()) {
+			out.println(ind+"} else {");
+			getElse().getBlock().getStmts().printLoop(out, ind+TAB, Optional.empty());
+		}
+		out.println(ind+"}");
+	}
+
+	public void WhileStmt.prettyPrint(PrintStream out, String ind){
+		out.print(ind+"while(");
+		getCondition().prettyPrint(out, ind);
+		out.println(") {");
+        getThen().getStmts().printLoop(out, ind+TAB, Optional.empty());
+		out.println(ind+"}");
+	}
+	public void ReturnStmt.prettyPrint(PrintStream out, String ind){
+		out.print(ind+"return ");
+		getReturn().prettyPrint(out, ind);
+		out.println(";");
+	}
+
+/* -- Quick Maths --- */
+
+	public void Numeral.prettyPrint(PrintStream out, String ind) {
+		out.print(getNUMERAL());
+	}
+
+	public void Mul.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" * ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void Div.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" / ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void Mod.prettyPrint(PrintStream out, String ind){
+		getLeft().prettyPrint(out, ind);
+		out.print(" % ");
+		getRight().prettyPrint(out, ind);
+	}
+
+	public void Add.prettyPrint(PrintStream out, String ind){
+		getLeft().prettyPrint(out, ind);
+		out.print(" + ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void Sub.prettyPrint(PrintStream out, String ind){
+		getLeft().prettyPrint(out, ind);
+		out.print(" - ");
+		getRight().prettyPrint(out, ind);
+	}
+
+	public void GT.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" > ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void LT.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" < ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void GE.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" >= ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void LE.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" <= ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void EQ.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" == ");
+		getRight().prettyPrint(out, ind);
+	}
+	public void NE.prettyPrint(PrintStream out, String ind) {
+		getLeft().prettyPrint(out, ind);
+		out.print(" != ");
+		getRight().prettyPrint(out, ind);
+	} 
+
+/* -- idk what to call the rest but yeah -- */
+
+	public void FuncCall.prettyPrint(PrintStream out, String ind) {
+	    out.print(ind);
+		getID().prettyPrint(out, ind);
+		out.print("(");
+		getArgs().getIdUses().printLoop(out, ind, Optional.of(", "));
+		out.print(")");
+	}
+
+	public void IdUse.prettyPrint(PrintStream out, String ind) {
+		out.print(getID());
+	}
+
+	public void IdDecl.prettyPrint(PrintStream out, String ind) {
+	    out.print("int ");
+		out.print(getID());
+	}
+
+	public void List.printLoop(PrintStream out, String ind, Optional<String> tagOpt) {
+	    String tag = tagOpt.isPresent() ? tagOpt.get() : null;
+        for (Iterator<T> it = iterator(); it.hasNext(); ) {
+            T element = it.next();
+            element.prettyPrint(out, ind);
+            if(it.hasNext()
+                && tag != null
+                && !IfStmt.class.isInstance(element)
+                && !WhileStmt.class.isInstance(element)){
+                out.print(tag);
+            }
+        }
+	}
+}
+

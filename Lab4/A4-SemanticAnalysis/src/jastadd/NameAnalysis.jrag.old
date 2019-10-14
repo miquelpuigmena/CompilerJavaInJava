@@ -1,0 +1,67 @@
+aspect NameAnalysis {
+	inh IdDecl IdUse.lookup(String name);
+	syn IdDecl IdUse.decl() = lookup(getID());
+
+	inh IdDecl IdDecl.lookup(String name);
+	syn boolean IdDecl.isMultiDeclared() {
+        System.out.println(getID());
+	    System.out.println(this);
+        System.out.println(lookup(getID()));
+
+	    return lookup(getID()) != this && !lookup(getID()).isUnknown();
+	}
+
+    /* FUNCTIONS SCOPE */
+    inh IdDecl FuncCall.lookup(String name);
+
+    eq Program.getFunc(int index).lookup(String name) {
+        for(int i=0; i<=index; i++){
+            if(getFunc(i).getDecl().getID().equals(name)) return getFunc(i).getDecl();
+        }
+        return UnknownDecl();
+    }
+
+    inh IdDecl Block.lookup(String name);
+    inh IdDecl AssigmtUse.lookup(String name);
+
+    eq Block.getStmt(int index).lookup(String name) {
+        for(int i=0; i<=index; i++){
+            if(AssigmtStmt.class.isInstance(getStmt(i))){
+                AssigmtStmt cast_local_stmt = (AssigmtStmt) getStmt(i);
+                if(cast_local_stmt.getLeft().getID().equals(name)) return cast_local_stmt.getLeft();
+            }
+        }
+        return lookup(name);
+    }
+
+    inh IdDecl FuncArgs.lookup(String name);
+    eq FuncArgs.getIdDecl(int index).lookup(String name) {
+        for(int i=0; i<=index; i++){
+            if(getIdDecl(i).getID().equals(name)) return getIdDecl(i);
+        }
+        return lookup(name);
+    }
+
+    inh IdDecl Func.lookup(String name);
+    eq Func.getBlock().lookup(String name) {
+        for(IdDecl idDecl : getArgs().getIdDecls()) {
+            if(idDecl.getID().equals(name)) return idDecl;
+        }
+        return lookup(name);
+    }
+
+
+	eq Program.getChild().lookup(String name) = UnknownDecl();
+
+}
+
+/* --- Circular --- */
+
+aspect CircularDefinitions {
+	/* Identify circular definitions in assigmts */
+	syn boolean IdUse.isCircular() = inExprOf(decl());
+	inh boolean IdUse.inExprOf(IdDecl decl);
+	inh boolean AssigmtStmt.inExprOf(IdDecl decl);
+	eq AssigmtStmt.getRight().inExprOf(IdDecl decl) = getLeft() == decl || inExprOf(decl);
+	eq Program.getChild().inExprOf(IdDecl decl) = false;
+}

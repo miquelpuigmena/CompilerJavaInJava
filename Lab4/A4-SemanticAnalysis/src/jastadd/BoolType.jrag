@@ -1,0 +1,9 @@
+aspect BoolType {
+	syn nta BoolType Program.BoolType() = new BoolType("<boolean>");
+	
+	inh BoolType ASTNode.BoolType();
+	eq Program.getChild().BoolType() = BoolType();
+	
+	syn boolean IdDecl.isBoolType() = false;
+	eq BoolType.isBoolType() = true;
+}

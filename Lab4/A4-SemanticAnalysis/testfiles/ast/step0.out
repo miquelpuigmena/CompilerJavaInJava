@@ -1,0 +1,38 @@
+Program
+  List
+    Func
+      IdDecl ID="f"
+      FuncArgs
+        List
+      Block
+        List
+          ReturnStmt
+            Add
+              Mul
+                Numeral NUMERAL="-1"
+                Mul
+                  Numeral NUMERAL="-1"
+                  IdUse ID="x"
+              Mul
+                Numeral NUMERAL="3"
+                Numeral NUMERAL="-2"
+          IfStmt
+            EQ
+              IdUse ID="a"
+              Numeral NUMERAL="2"
+            Block
+              List
+                ReturnStmt
+                  Numeral NUMERAL="2"
+            ElseIfStmts
+              List
+                ElseIfStmt
+                  EQ
+                    IdUse ID="b"
+                    Numeral NUMERAL="3"
+                  Block
+                    List
+                      AssigmtUse
+                        IdUse ID="nothing"
+                        Numeral NUMERAL="2"
+            Opt

@@ -1,0 +1,97 @@
+aspect NameAnalysis {
+    syn Type Stmt.type();
+    eq IdUse.type() = decl().type();
+    inh Type IdDecl.type();
+    eq Func.getDecl().type() = getType();
+    eq AssigmtStmt.getIdDecl().type() = getType();
+    eq Condition.getCondition().type() = getType();
+    eq ReturnStmt.getReturn().type() = getType();
+
+	eq Program.getChild().lookup(String name) = UnknownDecl();
+	eq Program.unknownDecl().type() = unknownType();
+	eq Program.getFunc(int index).lookup(String name) {
+        for(Func func : getFuncs().addAll(PreDefFuncs())){
+            if(func.getDecl().getID().equals(name)) return func.getDecl();
+        }
+        return UnknownDecl();
+    }
+
+	inh IdDecl IdUse.lookup(String name);
+	syn IdDecl IdUse.decl() = lookup(getID());
+
+	inh IdDecl IdDecl.lookup(String name);
+	syn boolean IdDecl.isMultiDeclared() = (lookup(getID()) != this);
+	syn boolean FuncCall.areArgsIncorrect() {
+	    if(!Program.class.isInstance(getID().decl().getParent())) {
+	        Func f_decl = (Func) getID().decl().getParent();
+	        int num_args_func_call = getArgs().getIdUseList().getNumChild();
+	        int num_args_func_decl = f_decl.getArgs().getIdDeclList().getNumChild();
+	        return (num_args_func_call != num_args_func_decl);
+	    }
+	    Program p_decl = (Program) getID().decl().getParent();
+	    for(Func f : p_decl.PreDefFuncs()) {
+	        if(f.getDecl().getID().equals(getID().getID())) {
+                int num_args_func_call = getArgs().getIdUseList().getNumChild();
+                int num_args_func_def_decl = f.getArgs().getIdDeclList().getNumChild();
+                return !(num_args_func_call != num_args_func_def_decl);
+	        }
+	    }
+	    return false;
+	}
+
+	inh IdDecl Stmt.lookup(String name);
+	syn IdDecl Stmt.localLookup(String name) = UnknownDecl();
+
+	syn IdDecl AssigmtStmt.localLookup(String name) {
+    	return getLeft().getID().equals(name) ? getLeft() : UnknownDecl();
+  	}
+
+	inh IdDecl FuncCall.lookup(String name);
+	syn IdDecl Func.localLookup(String name) = UnknownDecl();
+	inh IdDecl FuncArgs.lookup(String name);
+	inh IdDecl Func.lookup(String name);
+
+	eq Func.getBlock().lookup(String name){
+		for(IdDecl idDecl : getArgs().getIdDecls()){
+			if(idDecl.getID().equals(name)){
+				return idDecl;
+			}
+		}
+		return lookup(name);
+	}
+
+	eq FuncArgs.getIdDecl(int index).lookup(String name){
+		for(int i = 0; i <= index; i++){
+			if(getIdDecl(i).getID().equals(name)){
+				return getIdDecl(i);
+			}
+		}
+		return lookup(name);
+	}
+
+	inh IdDecl Block.lookup(String name);
+	inh IdDecl AssigmtUse.lookup(String name);
+
+	eq Block.getStmt(int index).lookup(String name){
+		for(int i = 0; i <= index; i++){
+			if(AssigmtStmt.class.isInstance(getStmt(i))){
+				AssigmtStmt cast_local_stmt = (AssigmtStmt) getStmt(i);
+				if(cast_local_stmt.getLeft().getID().equals(name)){
+					return cast_local_stmt.getLeft();
+				}
+			}
+		}
+		return lookup(name);
+	}
+}
+
+/* --- Circular --- */
+
+aspect CircularDefinitions {
+	/* Identify circular definitions in assigmts */
+	syn boolean IdUse.isCircular() = inExprOf(decl());
+	inh boolean IdUse.inExprOf(IdDecl decl);
+	inh boolean AssigmtStmt.inExprOf(IdDecl decl);
+	eq AssigmtStmt.getRight().inExprOf(IdDecl decl) = getLeft() == decl || inExprOf(decl);
+	eq Program.getChild().inExprOf(IdDecl decl) = false;
+}
