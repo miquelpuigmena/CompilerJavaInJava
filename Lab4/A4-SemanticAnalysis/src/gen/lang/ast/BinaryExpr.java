@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:30
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:34
  * @astdecl BinaryExpr : Expr ::= Left:Expr Right:Expr;
  * @production BinaryExpr : {@link Expr} ::= <span class="component">Left:{@link Expr}</span> <span class="component">Right:{@link Expr}</span>;
 
@@ -54,15 +54,16 @@ public abstract class BinaryExpr extends Expr implements Cloneable {
    */
   public void flushAttrCache() {
     super.flushAttrCache();
+    type_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:31
+   * @declaredat ASTNode:32
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:35
+   * @declaredat ASTNode:36
    */
   public BinaryExpr clone() throws CloneNotSupportedException {
     BinaryExpr node = (BinaryExpr) super.clone();
@@ -74,7 +75,7 @@ public abstract class BinaryExpr extends Expr implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:46
+   * @declaredat ASTNode:47
    */
   @Deprecated
   public abstract BinaryExpr fullCopy();
@@ -83,7 +84,7 @@ public abstract class BinaryExpr extends Expr implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:54
+   * @declaredat ASTNode:55
    */
   public abstract BinaryExpr treeCopyNoTransform();
   /**
@@ -92,7 +93,7 @@ public abstract class BinaryExpr extends Expr implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:62
+   * @declaredat ASTNode:63
    */
   public abstract BinaryExpr treeCopy();
   /**
@@ -146,5 +147,43 @@ public abstract class BinaryExpr extends Expr implements Cloneable {
    */
   public Expr getRightNoTransform() {
     return (Expr) getChildNoTransform(1);
+  }
+/** @apilevel internal */
+protected boolean type_visited = false;
+  /** @apilevel internal */
+  private void type_reset() {
+    type_computed = false;
+    
+    type_value = null;
+    type_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean type_computed = false;
+
+  /** @apilevel internal */
+  protected Type type_value;
+
+  /**
+   * @attribute syn
+   * @aspect TypeAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:9
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="TypeAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:3")
+  public Type type() {
+    ASTState state = state();
+    if (type_computed) {
+      return type_value;
+    }
+    if (type_visited) {
+      throw new RuntimeException("Circular definition of attribute Expr.type().");
+    }
+    type_visited = true;
+    state().enterLazyAttribute();
+    type_value = IntType();
+    type_computed = true;
+    state().leaveLazyAttribute();
+    type_visited = false;
+    return type_value;
   }
 }

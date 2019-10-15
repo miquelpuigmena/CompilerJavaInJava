@@ -9,19 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:32
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:37
  * @astdecl Sub : BinaryExpr ::= Left:Expr Right:Expr;
  * @production Sub : {@link BinaryExpr};
 
  */
 public class Sub extends BinaryExpr implements Cloneable {
-  /**
-   * @aspect Visitor
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/Visitor.jrag:135
-   */
-  public Object accept(Visitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
   /**
    * @aspect PrettyPrint
    * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/PrettyPrint.jrag:125

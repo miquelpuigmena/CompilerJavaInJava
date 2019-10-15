@@ -156,4 +156,20 @@ protected java.util.Set lookup_String_visited;
   /** @apilevel internal */
   protected java.util.Map lookup_String_values;
 
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:5
+   * @apilevel internal
+   */
+  public Type Define_expectedType(ASTNode _callerNode, ASTNode _childNode) {
+    int childIndex = this.getIndexOfChild(_callerNode);
+    return IntType();
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:5
+   * @apilevel internal
+   * @return {@code true} if this node has an equation for the inherited attribute expectedType
+   */
+  protected boolean canDefine_expectedType(ASTNode _callerNode, ASTNode _childNode) {
+    return true;
+  }
 }

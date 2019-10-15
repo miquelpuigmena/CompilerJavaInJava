@@ -9,19 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:12
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:17
  * @astdecl FuncCall : Call ::= ID:IdUse Args:FuncCallArgs;
  * @production FuncCall : {@link Call} ::= <span class="component">ID:{@link IdUse}</span> <span class="component">Args:{@link FuncCallArgs}</span>;
 
  */
 public class FuncCall extends Call implements Cloneable {
-  /**
-   * @aspect Visitor
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/Visitor.jrag:87
-   */
-  public Object accept(Visitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
   /**
    * @aspect PrettyPrint
    * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/PrettyPrint.jrag:164
@@ -73,23 +66,24 @@ public class FuncCall extends Call implements Cloneable {
   public void flushAttrCache() {
     super.flushAttrCache();
     areArgsIncorrect_reset();
+    type_reset();
     lookup_String_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:33
+   * @declaredat ASTNode:34
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:37
+   * @declaredat ASTNode:38
    */
   public FuncCall clone() throws CloneNotSupportedException {
     FuncCall node = (FuncCall) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:42
+   * @declaredat ASTNode:43
    */
   public FuncCall copy() {
     try {
@@ -109,7 +103,7 @@ public class FuncCall extends Call implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:61
+   * @declaredat ASTNode:62
    */
   @Deprecated
   public FuncCall fullCopy() {
@@ -120,7 +114,7 @@ public class FuncCall extends Call implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:71
+   * @declaredat ASTNode:72
    */
   public FuncCall treeCopyNoTransform() {
     FuncCall tree = (FuncCall) copy();
@@ -141,7 +135,7 @@ public class FuncCall extends Call implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:91
+   * @declaredat ASTNode:92
    */
   public FuncCall treeCopy() {
     FuncCall tree = (FuncCall) copy();
@@ -157,7 +151,7 @@ public class FuncCall extends Call implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:105
+   * @declaredat ASTNode:106
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node);    
@@ -268,6 +262,44 @@ protected boolean areArgsIncorrect_visited = false;
   	    }
   	    return false;
   	}
+/** @apilevel internal */
+protected boolean type_visited = false;
+  /** @apilevel internal */
+  private void type_reset() {
+    type_computed = false;
+    
+    type_value = null;
+    type_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean type_computed = false;
+
+  /** @apilevel internal */
+  protected Type type_value;
+
+  /**
+   * @attribute syn
+   * @aspect TypeAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:14
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="TypeAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:3")
+  public Type type() {
+    ASTState state = state();
+    if (type_computed) {
+      return type_value;
+    }
+    if (type_visited) {
+      throw new RuntimeException("Circular definition of attribute Expr.type().");
+    }
+    type_visited = true;
+    state().enterLazyAttribute();
+    type_value = getID().type();
+    type_computed = true;
+    state().leaveLazyAttribute();
+    type_visited = false;
+    return type_value;
+  }
   /**
    * @attribute inh
    * @aspect NameAnalysis

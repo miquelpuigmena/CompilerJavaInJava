@@ -9,19 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:20
- * @astdecl IfStmt : Stmt ::= Condition:Expr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
- * @production IfStmt : {@link Stmt} ::= <span class="component">Condition:{@link Expr}</span> <span class="component">Then:{@link Block}</span> <span class="component">Elif:{@link ElseIfStmts}</span> <span class="component">[Else:{@link ElseStmt}]</span>;
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:24
+ * @astdecl IfStmt : Stmt ::= Condition:CompExpr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
+ * @production IfStmt : {@link Stmt} ::= <span class="component">Condition:{@link CompExpr}</span> <span class="component">Then:{@link Block}</span> <span class="component">Elif:{@link ElseIfStmts}</span> <span class="component">[Else:{@link ElseStmt}]</span>;
 
  */
 public class IfStmt extends Stmt implements Cloneable {
-  /**
-   * @aspect Visitor
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/Visitor.jrag:105
-   */
-  public Object accept(Visitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
   /**
    * @aspect PrettyPrint
    * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/PrettyPrint.jrag:64
@@ -68,10 +61,10 @@ public class IfStmt extends Stmt implements Cloneable {
    */
   @ASTNodeAnnotation.Constructor(
     name = {"Condition", "Then", "Elif", "Else"},
-    type = {"Expr", "Block", "ElseIfStmts", "Opt<ElseStmt>"},
+    type = {"CompExpr", "Block", "ElseIfStmts", "Opt<ElseStmt>"},
     kind = {"Child", "Child", "Child", "Opt"}
   )
-  public IfStmt(Expr p0, Block p1, ElseIfStmts p2, Opt<ElseStmt> p3) {
+  public IfStmt(CompExpr p0, Block p1, ElseIfStmts p2, Opt<ElseStmt> p3) {
     setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
@@ -181,7 +174,7 @@ public class IfStmt extends Stmt implements Cloneable {
    * @param node The new node to replace the Condition child.
    * @apilevel high-level
    */
-  public void setCondition(Expr node) {
+  public void setCondition(CompExpr node) {
     setChild(node, 0);
   }
   /**
@@ -190,8 +183,8 @@ public class IfStmt extends Stmt implements Cloneable {
    * @apilevel high-level
    */
   @ASTNodeAnnotation.Child(name="Condition")
-  public Expr getCondition() {
-    return (Expr) getChild(0);
+  public CompExpr getCondition() {
+    return (CompExpr) getChild(0);
   }
   /**
    * Retrieves the Condition child.
@@ -199,8 +192,8 @@ public class IfStmt extends Stmt implements Cloneable {
    * @return The current node used as the Condition child.
    * @apilevel low-level
    */
-  public Expr getConditionNoTransform() {
-    return (Expr) getChildNoTransform(0);
+  public CompExpr getConditionNoTransform() {
+    return (CompExpr) getChildNoTransform(0);
   }
   /**
    * Replaces the Then child.
@@ -304,5 +297,26 @@ public class IfStmt extends Stmt implements Cloneable {
    */
   public Opt<ElseStmt> getElseOptNoTransform() {
     return (Opt<ElseStmt>) getChildNoTransform(3);
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:5
+   * @apilevel internal
+   */
+  public Type Define_expectedType(ASTNode _callerNode, ASTNode _childNode) {
+    if (_callerNode == getConditionNoTransform()) {
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:17
+      return BoolType();
+    }
+    else {
+      return super.Define_expectedType(_callerNode, _childNode);
+    }
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:5
+   * @apilevel internal
+   * @return {@code true} if this node has an equation for the inherited attribute expectedType
+   */
+  protected boolean canDefine_expectedType(ASTNode _callerNode, ASTNode _childNode) {
+    return true;
   }
 }

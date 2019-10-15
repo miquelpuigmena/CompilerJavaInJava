@@ -9,25 +9,16 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:42
- * @astdecl LT : CompExpr ::= Left:Expr Right:Expr;
- * @production LT : {@link CompExpr};
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:35
+ * @astdecl CompExpr : Expr ::= Left:Expr Right:Expr;
+ * @production CompExpr : {@link Expr} ::= <span class="component">Left:{@link Expr}</span> <span class="component">Right:{@link Expr}</span>;
 
  */
-public class LT extends CompExpr implements Cloneable {
-  /**
-   * @aspect PrettyPrint
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/PrettyPrint.jrag:136
-   */
-  public void prettyPrint(PrintStream out, String ind) {
-		getLeft().prettyPrint(out, ind);
-		out.print(" < ");
-		getRight().prettyPrint(out, ind);
-	}
+public abstract class CompExpr extends Expr implements Cloneable {
   /**
    * @declaredat ASTNode:1
    */
-  public LT() {
+  public CompExpr() {
     super();
   }
   /**
@@ -48,7 +39,7 @@ public class LT extends CompExpr implements Cloneable {
     type = {"Expr", "Expr"},
     kind = {"Child", "Child"}
   )
-  public LT(Expr p0, Expr p1) {
+  public CompExpr(Expr p0, Expr p1) {
     setChild(p0, 0);
     setChild(p1, 1);
   }
@@ -63,34 +54,20 @@ public class LT extends CompExpr implements Cloneable {
    */
   public void flushAttrCache() {
     super.flushAttrCache();
+    type_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:31
+   * @declaredat ASTNode:32
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:35
+   * @declaredat ASTNode:36
    */
-  public LT clone() throws CloneNotSupportedException {
-    LT node = (LT) super.clone();
+  public CompExpr clone() throws CloneNotSupportedException {
+    CompExpr node = (CompExpr) super.clone();
     return node;
-  }
-  /** @apilevel internal 
-   * @declaredat ASTNode:40
-   */
-  public LT copy() {
-    try {
-      LT node = (LT) clone();
-      node.parent = null;
-      if (children != null) {
-        node.children = (ASTNode[]) children.clone();
-      }
-      return node;
-    } catch (CloneNotSupportedException e) {
-      throw new Error("Error: clone not supported for " + getClass().getName());
-    }
   }
   /**
    * Create a deep copy of the AST subtree at this node.
@@ -98,59 +75,27 @@ public class LT extends CompExpr implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:59
+   * @declaredat ASTNode:47
    */
   @Deprecated
-  public LT fullCopy() {
-    return treeCopyNoTransform();
-  }
+  public abstract CompExpr fullCopy();
   /**
    * Create a deep copy of the AST subtree at this node.
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:69
+   * @declaredat ASTNode:55
    */
-  public LT treeCopyNoTransform() {
-    LT tree = (LT) copy();
-    if (children != null) {
-      for (int i = 0; i < children.length; ++i) {
-        ASTNode child = (ASTNode) children[i];
-        if (child != null) {
-          child = child.treeCopyNoTransform();
-          tree.setChild(child, i);
-        }
-      }
-    }
-    return tree;
-  }
+  public abstract CompExpr treeCopyNoTransform();
   /**
    * Create a deep copy of the AST subtree at this node.
    * The subtree of this node is traversed to trigger rewrites before copy.
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:89
+   * @declaredat ASTNode:63
    */
-  public LT treeCopy() {
-    LT tree = (LT) copy();
-    if (children != null) {
-      for (int i = 0; i < children.length; ++i) {
-        ASTNode child = (ASTNode) getChild(i);
-        if (child != null) {
-          child = child.treeCopy();
-          tree.setChild(child, i);
-        }
-      }
-    }
-    return tree;
-  }
-  /** @apilevel internal 
-   * @declaredat ASTNode:103
-   */
-  protected boolean is$Equal(ASTNode node) {
-    return super.is$Equal(node);    
-  }
+  public abstract CompExpr treeCopy();
   /**
    * Replaces the Left child.
    * @param node The new node to replace the Left child.
@@ -202,5 +147,43 @@ public class LT extends CompExpr implements Cloneable {
    */
   public Expr getRightNoTransform() {
     return (Expr) getChildNoTransform(1);
+  }
+/** @apilevel internal */
+protected boolean type_visited = false;
+  /** @apilevel internal */
+  private void type_reset() {
+    type_computed = false;
+    
+    type_value = null;
+    type_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean type_computed = false;
+
+  /** @apilevel internal */
+  protected Type type_value;
+
+  /**
+   * @attribute syn
+   * @aspect TypeAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:10
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="TypeAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:3")
+  public Type type() {
+    ASTState state = state();
+    if (type_computed) {
+      return type_value;
+    }
+    if (type_visited) {
+      throw new RuntimeException("Circular definition of attribute Expr.type().");
+    }
+    type_visited = true;
+    state().enterLazyAttribute();
+    type_value = BoolType();
+    type_computed = true;
+    state().leaveLazyAttribute();
+    type_visited = false;
+    return type_value;
   }
 }

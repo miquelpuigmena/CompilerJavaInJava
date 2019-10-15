@@ -1,14 +1,6 @@
 aspect NameAnalysis {
-    syn Type Stmt.type();
-    eq IdUse.type() = decl().type();
-    inh Type IdDecl.type();
-    eq Func.getDecl().type() = getType();
-    eq AssigmtStmt.getIdDecl().type() = getType();
-    eq Condition.getCondition().type() = getType();
-    eq ReturnStmt.getReturn().type() = getType();
 
 	eq Program.getChild().lookup(String name) = UnknownDecl();
-	eq Program.unknownDecl().type() = unknownType();
 	eq Program.getFunc(int index).lookup(String name) {
         for(Func func : getFuncs().addAll(PreDefFuncs())){
             if(func.getDecl().getID().equals(name)) return func.getDecl();

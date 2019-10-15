@@ -25,6 +25,7 @@
 %typeof id_decl         = "IdDecl";
 %typeof integer         = "Factor";
 %typeof expr            = "Expr";
+%typeof comp_expr       = "CompExpr";
 %typeof sum             = "Expr";
 %typeof term            = "Expr";
 %typeof factor          = "Expr";
@@ -37,7 +38,7 @@
 
 %typeof block           = "Block";
 %typeof return_stmt     = "Stmt";
-%typeof condition       = "Expr";
+%typeof condition       = "CompExpr";
 %typeof while_stmt      = "Stmt";
 %typeof if_stmt         = "Stmt";
 %typeof elseif_stmt     = "Stmt";
@@ -104,19 +105,19 @@ elseif_stmts =
     ;
 
 elseif_stmt =
-    ELSEIF LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
+    ELSEIF LEFTPARENTHESIS condition.a RIGHTPARENTHESIS
         LEFTBRACKET block.b RIGHTBRACKET
             {: return new ElseIfStmt(a, b); :}
     ;
 
 if_stmt =
-    IF LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
+    IF LEFTPARENTHESIS condition.a RIGHTPARENTHESIS
         LEFTBRACKET block.b RIGHTBRACKET elseif_stmts.c else_stmt.d
             {: return new IfStmt(a, b, new ElseIfStmts(c), d); :}
     ;
 
 while_stmt =
-    WHILE LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
+    WHILE LEFTPARENTHESIS condition.a RIGHTPARENTHESIS
         LEFTBRACKET block.b RIGHTBRACKET
             {: return new WhileStmt(a, b); :}
     ;
@@ -137,7 +138,7 @@ assigmt_use =
 
 expr =
     sum
-	| condition
+    | condition
 	;
 
 sum =
@@ -158,7 +159,7 @@ factor =
     | id_use
     | LEFTPARENTHESIS expr.a RIGHTPARENTHESIS {: return a; :}
     | func_call
-    | SUB factor.a                {: return new Mul(new Numeral("-1"), a); :}
+    | SUB factor.a              {: return new Mul(new Numeral("-1"), a); :}
     ;
 
 condition =

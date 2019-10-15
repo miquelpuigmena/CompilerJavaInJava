@@ -44,6 +44,10 @@ aspect ErrorContributions {
 		to Program.errors() for program();
 
 	FuncCall contributes error("Wrong number of arguments. Found '" + getArgs().getIdUseList().getNumChild() + "' arguments but expected number was '" + ((Func)getID().decl().getParent()).getArgs().getIdDeclList().getNumChild() + "'")
-    		when areArgsIncorrect()
-    		to Program.errors() for program();
+        when areArgsIncorrect()
+        to Program.errors() for program();
+
+    Expr contributes error("Expected type: " + expectedType() + ". Received type: " + type())
+        when compatibleType()
+        to Program.errors() for program();
 }

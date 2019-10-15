@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:16
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:21
  * @astdecl AssigmtUse : Stmt ::= Left:IdUse Right:Expr;
  * @production AssigmtUse : {@link Stmt} ::= <span class="component">Left:{@link IdUse}</span> <span class="component">Right:{@link Expr}</span>;
 

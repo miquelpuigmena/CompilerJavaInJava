@@ -3,4 +3,8 @@ b();
 g();
 print(ja);
 return read(1);
+int a;
+if(a==5){
+return 4==5;
+}
 }

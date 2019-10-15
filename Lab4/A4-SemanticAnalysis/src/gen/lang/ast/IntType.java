@@ -9,16 +9,16 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:27
- * @astdecl ElseStmt : Stmt ::= Block:Block;
- * @production ElseStmt : {@link Stmt} ::= <span class="component">Block:{@link Block}</span>;
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:9
+ * @astdecl IntType : Type;
+ * @production IntType : {@link Type};
 
  */
-public class ElseStmt extends Stmt implements Cloneable {
+public class IntType extends Type implements Cloneable {
   /**
    * @declaredat ASTNode:1
    */
-  public ElseStmt() {
+  public IntType() {
     super();
   }
   /**
@@ -29,50 +29,39 @@ public class ElseStmt extends Stmt implements Cloneable {
    * @declaredat ASTNode:10
    */
   public void init$Children() {
-    children = new ASTNode[1];
-  }
-  /**
-   * @declaredat ASTNode:13
-   */
-  @ASTNodeAnnotation.Constructor(
-    name = {"Block"},
-    type = {"Block"},
-    kind = {"Child"}
-  )
-  public ElseStmt(Block p0) {
-    setChild(p0, 0);
   }
   /** @apilevel low-level 
-   * @declaredat ASTNode:22
+   * @declaredat ASTNode:13
    */
   protected int numChildren() {
-    return 1;
+    return 0;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:26
+   * @declaredat ASTNode:17
    */
   public void flushAttrCache() {
     super.flushAttrCache();
+    isIntType_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:30
+   * @declaredat ASTNode:22
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:34
+   * @declaredat ASTNode:26
    */
-  public ElseStmt clone() throws CloneNotSupportedException {
-    ElseStmt node = (ElseStmt) super.clone();
+  public IntType clone() throws CloneNotSupportedException {
+    IntType node = (IntType) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:39
+   * @declaredat ASTNode:31
    */
-  public ElseStmt copy() {
+  public IntType copy() {
     try {
-      ElseStmt node = (ElseStmt) clone();
+      IntType node = (IntType) clone();
       node.parent = null;
       if (children != null) {
         node.children = (ASTNode[]) children.clone();
@@ -88,10 +77,10 @@ public class ElseStmt extends Stmt implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:58
+   * @declaredat ASTNode:50
    */
   @Deprecated
-  public ElseStmt fullCopy() {
+  public IntType fullCopy() {
     return treeCopyNoTransform();
   }
   /**
@@ -99,10 +88,10 @@ public class ElseStmt extends Stmt implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:68
+   * @declaredat ASTNode:60
    */
-  public ElseStmt treeCopyNoTransform() {
-    ElseStmt tree = (ElseStmt) copy();
+  public IntType treeCopyNoTransform() {
+    IntType tree = (IntType) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) children[i];
@@ -120,10 +109,10 @@ public class ElseStmt extends Stmt implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:88
+   * @declaredat ASTNode:80
    */
-  public ElseStmt treeCopy() {
-    ElseStmt tree = (ElseStmt) copy();
+  public IntType treeCopy() {
+    IntType tree = (IntType) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) getChild(i);
@@ -136,35 +125,45 @@ public class ElseStmt extends Stmt implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:102
+   * @declaredat ASTNode:94
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node);    
   }
-  /**
-   * Replaces the Block child.
-   * @param node The new node to replace the Block child.
-   * @apilevel high-level
-   */
-  public void setBlock(Block node) {
-    setChild(node, 0);
+/** @apilevel internal */
+protected boolean isIntType_visited = false;
+  /** @apilevel internal */
+  private void isIntType_reset() {
+    isIntType_computed = false;
+    isIntType_visited = false;
   }
+  /** @apilevel internal */
+  protected boolean isIntType_computed = false;
+
+  /** @apilevel internal */
+  protected boolean isIntType_value;
+
   /**
-   * Retrieves the Block child.
-   * @return The current node used as the Block child.
-   * @apilevel high-level
+   * @attribute syn
+   * @aspect IntType
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/IntType.jrag:8
    */
-  @ASTNodeAnnotation.Child(name="Block")
-  public Block getBlock() {
-    return (Block) getChild(0);
-  }
-  /**
-   * Retrieves the Block child.
-   * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The current node used as the Block child.
-   * @apilevel low-level
-   */
-  public Block getBlockNoTransform() {
-    return (Block) getChildNoTransform(0);
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="IntType", declaredAt="/home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/IntType.jrag:7")
+  public boolean isIntType() {
+    ASTState state = state();
+    if (isIntType_computed) {
+      return isIntType_value;
+    }
+    if (isIntType_visited) {
+      throw new RuntimeException("Circular definition of attribute Type.isIntType().");
+    }
+    isIntType_visited = true;
+    state().enterLazyAttribute();
+    isIntType_value = true;
+    isIntType_computed = true;
+    state().leaveLazyAttribute();
+    isIntType_visited = false;
+    return isIntType_value;
   }
 }

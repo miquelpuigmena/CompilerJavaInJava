@@ -9,23 +9,16 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:18
- * @astdecl Condition : Expr ::= Condition:Expr;
- * @production Condition : {@link Expr} ::= <span class="component">Condition:{@link Expr}</span>;
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:11
+ * @astdecl UnknownType : Type;
+ * @production UnknownType : {@link Type};
 
  */
-public class Condition extends Expr implements Cloneable {
-  /**
-   * @aspect Visitor
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/Visitor.jrag:66
-   */
-  public Object accept(Visitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
+public class UnknownType extends Type implements Cloneable {
   /**
    * @declaredat ASTNode:1
    */
-  public Condition() {
+  public UnknownType() {
     super();
   }
   /**
@@ -36,50 +29,39 @@ public class Condition extends Expr implements Cloneable {
    * @declaredat ASTNode:10
    */
   public void init$Children() {
-    children = new ASTNode[1];
-  }
-  /**
-   * @declaredat ASTNode:13
-   */
-  @ASTNodeAnnotation.Constructor(
-    name = {"Condition"},
-    type = {"Expr"},
-    kind = {"Child"}
-  )
-  public Condition(Expr p0) {
-    setChild(p0, 0);
   }
   /** @apilevel low-level 
-   * @declaredat ASTNode:22
+   * @declaredat ASTNode:13
    */
   protected int numChildren() {
-    return 1;
+    return 0;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:26
+   * @declaredat ASTNode:17
    */
   public void flushAttrCache() {
     super.flushAttrCache();
+    isUnknownType_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:30
+   * @declaredat ASTNode:22
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:34
+   * @declaredat ASTNode:26
    */
-  public Condition clone() throws CloneNotSupportedException {
-    Condition node = (Condition) super.clone();
+  public UnknownType clone() throws CloneNotSupportedException {
+    UnknownType node = (UnknownType) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:39
+   * @declaredat ASTNode:31
    */
-  public Condition copy() {
+  public UnknownType copy() {
     try {
-      Condition node = (Condition) clone();
+      UnknownType node = (UnknownType) clone();
       node.parent = null;
       if (children != null) {
         node.children = (ASTNode[]) children.clone();
@@ -95,10 +77,10 @@ public class Condition extends Expr implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:58
+   * @declaredat ASTNode:50
    */
   @Deprecated
-  public Condition fullCopy() {
+  public UnknownType fullCopy() {
     return treeCopyNoTransform();
   }
   /**
@@ -106,10 +88,10 @@ public class Condition extends Expr implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:68
+   * @declaredat ASTNode:60
    */
-  public Condition treeCopyNoTransform() {
-    Condition tree = (Condition) copy();
+  public UnknownType treeCopyNoTransform() {
+    UnknownType tree = (UnknownType) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) children[i];
@@ -127,10 +109,10 @@ public class Condition extends Expr implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:88
+   * @declaredat ASTNode:80
    */
-  public Condition treeCopy() {
-    Condition tree = (Condition) copy();
+  public UnknownType treeCopy() {
+    UnknownType tree = (UnknownType) copy();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         ASTNode child = (ASTNode) getChild(i);
@@ -143,35 +125,45 @@ public class Condition extends Expr implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:102
+   * @declaredat ASTNode:94
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node);    
   }
-  /**
-   * Replaces the Condition child.
-   * @param node The new node to replace the Condition child.
-   * @apilevel high-level
-   */
-  public void setCondition(Expr node) {
-    setChild(node, 0);
+/** @apilevel internal */
+protected boolean isUnknownType_visited = false;
+  /** @apilevel internal */
+  private void isUnknownType_reset() {
+    isUnknownType_computed = false;
+    isUnknownType_visited = false;
   }
+  /** @apilevel internal */
+  protected boolean isUnknownType_computed = false;
+
+  /** @apilevel internal */
+  protected boolean isUnknownType_value;
+
   /**
-   * Retrieves the Condition child.
-   * @return The current node used as the Condition child.
-   * @apilevel high-level
+   * @attribute syn
+   * @aspect UnknownType
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/UnknownType.jrag:8
    */
-  @ASTNodeAnnotation.Child(name="Condition")
-  public Expr getCondition() {
-    return (Expr) getChild(0);
-  }
-  /**
-   * Retrieves the Condition child.
-   * <p><em>This method does not invoke AST transformations.</em></p>
-   * @return The current node used as the Condition child.
-   * @apilevel low-level
-   */
-  public Expr getConditionNoTransform() {
-    return (Expr) getChildNoTransform(0);
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="UnknownType", declaredAt="/home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/UnknownType.jrag:7")
+  public boolean isUnknownType() {
+    ASTState state = state();
+    if (isUnknownType_computed) {
+      return isUnknownType_value;
+    }
+    if (isUnknownType_visited) {
+      throw new RuntimeException("Circular definition of attribute Type.isUnknownType().");
+    }
+    isUnknownType_visited = true;
+    state().enterLazyAttribute();
+    isUnknownType_value = true;
+    isUnknownType_computed = true;
+    state().leaveLazyAttribute();
+    isUnknownType_visited = false;
+    return isUnknownType_value;
   }
 }

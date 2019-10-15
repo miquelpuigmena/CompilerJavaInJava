@@ -9,19 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:21
- * @astdecl ElseIfStmt : Stmt ::= Condition:Expr Then:Block;
- * @production ElseIfStmt : {@link Stmt} ::= <span class="component">Condition:{@link Expr}</span> <span class="component">Then:{@link Block}</span>;
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:25
+ * @astdecl ElseIfStmt : Stmt ::= Condition:CompExpr Then:Block;
+ * @production ElseIfStmt : {@link Stmt} ::= <span class="component">Condition:{@link CompExpr}</span> <span class="component">Then:{@link Block}</span>;
 
  */
 public class ElseIfStmt extends Stmt implements Cloneable {
-  /**
-   * @aspect Visitor
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/Visitor.jrag:108
-   */
-  public Object accept(Visitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
   /**
    * @declaredat ASTNode:1
    */
@@ -43,10 +36,10 @@ public class ElseIfStmt extends Stmt implements Cloneable {
    */
   @ASTNodeAnnotation.Constructor(
     name = {"Condition", "Then"},
-    type = {"Expr", "Block"},
+    type = {"CompExpr", "Block"},
     kind = {"Child", "Child"}
   )
-  public ElseIfStmt(Expr p0, Block p1) {
+  public ElseIfStmt(CompExpr p0, Block p1) {
     setChild(p0, 0);
     setChild(p1, 1);
   }
@@ -154,7 +147,7 @@ public class ElseIfStmt extends Stmt implements Cloneable {
    * @param node The new node to replace the Condition child.
    * @apilevel high-level
    */
-  public void setCondition(Expr node) {
+  public void setCondition(CompExpr node) {
     setChild(node, 0);
   }
   /**
@@ -163,8 +156,8 @@ public class ElseIfStmt extends Stmt implements Cloneable {
    * @apilevel high-level
    */
   @ASTNodeAnnotation.Child(name="Condition")
-  public Expr getCondition() {
-    return (Expr) getChild(0);
+  public CompExpr getCondition() {
+    return (CompExpr) getChild(0);
   }
   /**
    * Retrieves the Condition child.
@@ -172,8 +165,8 @@ public class ElseIfStmt extends Stmt implements Cloneable {
    * @return The current node used as the Condition child.
    * @apilevel low-level
    */
-  public Expr getConditionNoTransform() {
-    return (Expr) getChildNoTransform(0);
+  public CompExpr getConditionNoTransform() {
+    return (CompExpr) getChildNoTransform(0);
   }
   /**
    * Replaces the Then child.
@@ -200,5 +193,26 @@ public class ElseIfStmt extends Stmt implements Cloneable {
    */
   public Block getThenNoTransform() {
     return (Block) getChildNoTransform(1);
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:5
+   * @apilevel internal
+   */
+  public Type Define_expectedType(ASTNode _callerNode, ASTNode _childNode) {
+    if (_callerNode == getConditionNoTransform()) {
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:18
+      return BoolType();
+    }
+    else {
+      return super.Define_expectedType(_callerNode, _childNode);
+    }
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/TypeAnalysis.jrag:5
+   * @apilevel internal
+   * @return {@code true} if this node has an equation for the inherited attribute expectedType
+   */
+  protected boolean canDefine_expectedType(ASTNode _callerNode, ASTNode _childNode) {
+    return true;
   }
 }

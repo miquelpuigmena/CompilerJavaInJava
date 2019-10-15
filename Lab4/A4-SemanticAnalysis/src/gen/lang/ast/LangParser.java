@@ -218,19 +218,19 @@ public class LangParser extends beaver.Parser {
         return new AssigmtStmt(left, new Opt());
       }
     },
-    new Action() { // [26] return_stmt =  RETURN expr SEMICOLON
+    new Action() { // [26] factor =  SUB factor
+      public Symbol reduce(Symbol[] _symbols, int offset) {
+        final Symbol SUB = _symbols[offset + 1];
+        final Expr a = (Expr) _symbols[offset + 2].value;
+        return new Mul(new Numeral("-1"), a);
+      }
+    },
+    new Action() { // [27] return_stmt =  RETURN expr SEMICOLON
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Symbol RETURN = _symbols[offset + 1];
         final Expr e = (Expr) _symbols[offset + 2].value;
         final Symbol SEMICOLON = _symbols[offset + 3];
         return new ReturnStmt(e);
-      }
-    },
-    new Action() { // [27] factor =  SUB factor
-      public Symbol reduce(Symbol[] _symbols, int offset) {
-        final Symbol SUB = _symbols[offset + 1];
-        final Expr a = (Expr) _symbols[offset + 2].value;
-        return new Mul(new Numeral("-1"), a);
       }
     },
     new Action() { // [28] assigmt_use =  id_use ASSIGN expr SEMICOLON
@@ -275,15 +275,7 @@ public class LangParser extends beaver.Parser {
         return new Mul(a, b);
       }
     },
-    new Action() { // [33] factor =  LEFTPARENTHESIS expr RIGHTPARENTHESIS
-      public Symbol reduce(Symbol[] _symbols, int offset) {
-        final Symbol LEFTPARENTHESIS = _symbols[offset + 1];
-        final Expr a = (Expr) _symbols[offset + 2].value;
-        final Symbol RIGHTPARENTHESIS = _symbols[offset + 3];
-        return a;
-      }
-    },
-    new Action() { // [34] sum =  sum ADD term
+    new Action() { // [33] sum =  sum ADD term
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Expr a = (Expr) _symbols[offset + 1].value;
         final Symbol ADD = _symbols[offset + 2];
@@ -291,7 +283,7 @@ public class LangParser extends beaver.Parser {
         return new Add(a, b);
       }
     },
-    new Action() { // [35] condition =  sum GE sum
+    new Action() { // [34] condition =  sum GE sum
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Expr a = (Expr) _symbols[offset + 1].value;
         final Symbol GE = _symbols[offset + 2];
@@ -299,7 +291,7 @@ public class LangParser extends beaver.Parser {
         return new GE(a, b);
       }
     },
-    new Action() { // [36] condition =  sum LE sum
+    new Action() { // [35] condition =  sum LE sum
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Expr a = (Expr) _symbols[offset + 1].value;
         final Symbol LE = _symbols[offset + 2];
@@ -307,12 +299,20 @@ public class LangParser extends beaver.Parser {
         return new LE(a, b);
       }
     },
-    new Action() { // [37] condition =  sum LT sum
+    new Action() { // [36] condition =  sum LT sum
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Expr a = (Expr) _symbols[offset + 1].value;
         final Symbol LT = _symbols[offset + 2];
         final Expr b = (Expr) _symbols[offset + 3].value;
         return new LT(a, b);
+      }
+    },
+    new Action() { // [37] condition =  sum EQ sum
+      public Symbol reduce(Symbol[] _symbols, int offset) {
+        final Expr a = (Expr) _symbols[offset + 1].value;
+        final Symbol EQ = _symbols[offset + 2];
+        final Expr b = (Expr) _symbols[offset + 3].value;
+        return new EQ(a, b);
       }
     },
     new Action() { // [38] sum =  sum SUB term
@@ -323,12 +323,12 @@ public class LangParser extends beaver.Parser {
         return new Sub(a, b);
       }
     },
-    new Action() { // [39] condition =  sum EQ sum
+    new Action() { // [39] condition =  sum NE sum
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Expr a = (Expr) _symbols[offset + 1].value;
-        final Symbol EQ = _symbols[offset + 2];
+        final Symbol NE = _symbols[offset + 2];
         final Expr b = (Expr) _symbols[offset + 3].value;
-        return new EQ(a, b);
+        return new NE(a, b);
       }
     },
     new Action() { // [40] condition =  sum GT sum
@@ -339,12 +339,12 @@ public class LangParser extends beaver.Parser {
         return new GT(a, b);
       }
     },
-    new Action() { // [41] condition =  sum NE sum
+    new Action() { // [41] factor =  LEFTPARENTHESIS expr RIGHTPARENTHESIS
       public Symbol reduce(Symbol[] _symbols, int offset) {
-        final Expr a = (Expr) _symbols[offset + 1].value;
-        final Symbol NE = _symbols[offset + 2];
-        final Expr b = (Expr) _symbols[offset + 3].value;
-        return new NE(a, b);
+        final Symbol LEFTPARENTHESIS = _symbols[offset + 1];
+        final Expr a = (Expr) _symbols[offset + 2].value;
+        final Symbol RIGHTPARENTHESIS = _symbols[offset + 3];
+        return a;
       }
     },
     new Action() { // [42] func_call_args =  func_call_args COMMA expr
@@ -370,11 +370,11 @@ public class LangParser extends beaver.Parser {
         return new List();
       }
     },
-    new Action() { // [45] while_stmt =  WHILE LEFTPARENTHESIS expr RIGHTPARENTHESIS LEFTBRACKET block RIGHTBRACKET
+    new Action() { // [45] while_stmt =  WHILE LEFTPARENTHESIS condition RIGHTPARENTHESIS LEFTBRACKET block RIGHTBRACKET
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Symbol WHILE = _symbols[offset + 1];
         final Symbol LEFTPARENTHESIS = _symbols[offset + 2];
-        final Expr a = (Expr) _symbols[offset + 3].value;
+        final CompExpr a = (CompExpr) _symbols[offset + 3].value;
         final Symbol RIGHTPARENTHESIS = _symbols[offset + 4];
         final Symbol LEFTBRACKET = _symbols[offset + 5];
         final Block b = (Block) _symbols[offset + 6].value;
@@ -394,11 +394,11 @@ public class LangParser extends beaver.Parser {
         return a.add(b);
       }
     },
-    new Action() { // [48] if_stmt =  IF LEFTPARENTHESIS expr RIGHTPARENTHESIS LEFTBRACKET block RIGHTBRACKET elseif_stmts else_stmt
+    new Action() { // [48] if_stmt =  IF LEFTPARENTHESIS condition RIGHTPARENTHESIS LEFTBRACKET block RIGHTBRACKET elseif_stmts else_stmt
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Symbol IF = _symbols[offset + 1];
         final Symbol LEFTPARENTHESIS = _symbols[offset + 2];
-        final Expr a = (Expr) _symbols[offset + 3].value;
+        final CompExpr a = (CompExpr) _symbols[offset + 3].value;
         final Symbol RIGHTPARENTHESIS = _symbols[offset + 4];
         final Symbol LEFTBRACKET = _symbols[offset + 5];
         final Block b = (Block) _symbols[offset + 6].value;
@@ -417,11 +417,11 @@ public class LangParser extends beaver.Parser {
         return new Opt(new ElseStmt(b));
       }
     },
-    new Action() { // [50] elseif_stmt =  ELSEIF LEFTPARENTHESIS expr RIGHTPARENTHESIS LEFTBRACKET block RIGHTBRACKET
+    new Action() { // [50] elseif_stmt =  ELSEIF LEFTPARENTHESIS condition RIGHTPARENTHESIS LEFTBRACKET block RIGHTBRACKET
       public Symbol reduce(Symbol[] _symbols, int offset) {
         final Symbol ELSEIF = _symbols[offset + 1];
         final Symbol LEFTPARENTHESIS = _symbols[offset + 2];
-        final Expr a = (Expr) _symbols[offset + 3].value;
+        final CompExpr a = (CompExpr) _symbols[offset + 3].value;
         final Symbol RIGHTPARENTHESIS = _symbols[offset + 4];
         final Symbol LEFTBRACKET = _symbols[offset + 5];
         final Block b = (Block) _symbols[offset + 6].value;
@@ -437,39 +437,39 @@ public class LangParser extends beaver.Parser {
         }
       };
   static final ParsingTables PARSING_TABLES = new ParsingTables(
-    "U9pjcrji55KOn$#zTziYDxb3MmfjeOLIA2qNmHieAEA5co8AYgA8YeXeeecN#C2BJvgeYJx" +
-    "uO4oC9chYYm$668s#A8e8fHGG510GKBnm4TJZ$yoPsJapdUrElz8kLSwNttvdllFzvrpcpE" +
-    "vsTmlqobCAXSX67YvIIds9NkYB4en53lhZOjo3Ogoa7uQ1c8HQrA01up4Pur27DUeV308m7" +
-    "AkHIpyKTp4JA2SZiPRrYe2cYHfpV2No0orJaotcU7ho#2QiTyuvpJrUW890vXKXvRpGyOt9" +
-    "uuNgRxY5DIzdiPMznAhVRDLlKNybZvPQyLkj#ZAhVXkIHPrLP$MZWpskvQ5nFiXZ9ozP4X0" +
-    "MTOOFHI9fWRZFFz5RAEqZxlEqEYrKdbAdX9tArbMNVbAXEgbE2fKdV6ym5aCwGDOZIwdhHx" +
-    "2$F#W7OnI6e2ozKFtUjXQpLCR86HtPvs##DnYBSRwg#CCBbMgfi1EZ7IFkyrVV6up5aCgVJ" +
-    "OvhqzxWHRqMsxmMjvIYtZhH1Ai#CKsVuhNDX1ADCNAYYtY57EKKYLBzudk3iQuShVhPzmPZ" +
-    "CVgS4ID7bqlQz7bCc$R1gDTYMplAoeueCJFcQDiKTLIRzi6er#AsNuRBSMb8UKGTqO#2JZk" +
-    "t#qHAzPCsxODHhyMsa59#FGzhqpuOzLfi2mrtJkJgpY9NuMhCnMnSYsiY9ofVs#lIjASiwf" +
-    "0sxODHhyMsaFAWEYZiT3wk5ofl4Eewi$j#zBt1MFekrG7V6unrvMWpeboKfZrbKVkrQH#CU" +
-    "YssdRFHNb2UZyhRqxIdB6gVxmt6OYX$qAPzCEgrs1QIokUv8lsuKfGxf4BrlJRjWr6lnRQG" +
-    "SgysxODHhyMsa7AFDks3KQ$5jf3oEstQ1wDUYsqXvMvjsWUZNelR7l5#YA$PkzGkvkqAH6S" +
-    "XVPcZTggTLEuKA5jLAvMj7LMg7Tgq3qQz5hSzUfujgeLvBOBHRbVRgTmkK3QhPYgREwoyCq" +
-    "PEP57Rr3QXKlo9YzhgUuEnhkmJTyV8YIwhf4BrhUyDnjhBDwrgYnlPuc4iHf$V#DvWBANWN" +
-    "dAVKxi$nfIY#zpiUuEnzlBTrWV4VNxjUuEn65Bv#rlvxdieHavqMITMFYmLggzyRp0MGobV" +
-    "eKV4eztaUuEnzlATrchKOJmVyp09OsWrh4z19QhGn1sY$GZk5KqPoZ4I5HY5qHX7vLYbKCl" +
-    "TehzFcg0pwHj8ewEQsaRZ7IDbI$ZOd7DoyZWhjh9DdyejdAUVOsUdggDZ#IfPa8DSFkOxtx" +
-    "Qb6ITpXbhAGYKioD4p52cpv7tgUSgKcUXJh1IjgwCSB5RAH#jUJ#VkB2095A4O9J6K1R8UE" +
-    "zMdTNzsiCyOzufzRrbH#MZpEpB2W59#PsTYjF8#vSycsVRpPZBQY$H67$H5F#TN2WCm48ES" +
-    "bkIrvQj3jdKUQwMTtpd46ArydjsgxCGUag#GlYuofUi5AvI1wndpNcdxZ6BlMokQSjz6A#F" +
-    "i#8wFDcByyj56w6BssQdT9rIUawjoVYaZvobVeOpj8L6VcNYlsSDULp9mbycLygiYttqzQu" +
-    "KkABjk3ydliapiFlbVaPbuZl$VAzELyqlv7vjdp$h49HDA#QSytVRv48QGOHBbEUcpspwhi" +
-    "VgKxzkUzNUs$3LRllioihPYPJVVPG0sFED$FJI2J2TBT9myJzucdv83G5OkAICpo5Bo665E" +
-    "rgja4paAPEUGAZARC2VxIV8YUOzi9Sp9kOZKaZba5NcMl4O#95l8II2tFwadyyaQmfpSryd" +
-    "7P0Sv0#GD98ra0LbBdYDlai$8Fd8Mo1zEffB5P3tXUFFV8L#GGq117gaWCyaoyZXvYRnFDf" +
-    "DZG64HgIQSK#4AyXHvXNn0FYBCIN1E2SufCPTmJWcEDy4v9JYd1CURu9oAEASYpgc8SofQH" +
-    "3QIDyWdP0zXJZ5pYfl8GhAECAVuBSBrAzuFb6IHKZADSDuboyaBv5toEJcihoSly5RI$BIv" +
-    "sAtQsx3i8RiZudkj#a7NdmZdHUZskVvKk8t3wKjAtNfLU#U1#RNra8Zuh1Jvywnw7U7QOQ4" +
-    "LqxyOMqbM4#uHF4gU87gPDeREzNAwUSPOXoFkkM35Mbn$F6Byt2F8ZuZNMFKDak#6UsXfSA" +
-    "xY5Bu#rV6Tu2HIpNeDOpNqzMGCO$LynwR$CwUIn#DHY5hwAiPBwMlfDVgRumeoYfIHaSuto" +
-    "JcOJA$$xx6Hb3DlAd8PpsLxJf9oKa56MuIF9vEno7DsN0CAd6$7ctY#2Npk7SVpJMHish#s" +
-    "fphq");
+    "U9pjcrbm54KOn$$9vjeDuPGRSa4II3W2uGP53WLH545G50z4L52v54jBgpnUVB2iqXUjqWS" +
+    "VzCqgjSe7Ntomj2mV14Na3X4K4HHGFBW4RVyzFRFJCqooiryWMw7IN$tsw$sw$$Drz$JCRd" +
+    "OtG5crKYX1FWhHNIcr1MNeXMuOYGJwu2eyX5AieX#CVXYF1jHZ0aPX34QZ2O#e$p00m12iG" +
+    "G7z83p0da0bgS9wrgj3cadkymKe2hLCjPvFnxHGwmsOuaOMepZGywPGprlTvqjSVrkwVQdw" +
+    "5uyxumDhlcgPLR$Tgj#Hhj#fBbZnvLRzBgk#8ZIIUvrCvzLv$UXWZtiT8ehkbox9g1vnYlg" +
+    "73ocHj5YSynnw2AKznJdFghD2vHbrHfXKjgwwz9OArMbrMgWyvNk3iHZIlhACBEMk7yfyVz" +
+    "Ftnp0CH4LceVhhubhCKXEZp$38Q6sMcT95$UbxWx4OqheSv1mXplc7xmt6OaZbTvEJshGtU" +
+    "56lnJQlnItbQBGEDDQgZykGKxoskL1YOem#qKMyGevoiaIfVlUzmTZb7AtwpVS6Op5oNXsZ" +
+    "ZoupBifvGflsmQZNObiRofgibCUrQH#CUYrk#qnSYsj2ocFgc7wCELkxN1#fdKNcO2wkmsp" +
+    "Cm$n8PVjsdqYfVjMcVJ3gjTWMKehF9sxCC9lMH$kBDks3KQ$5jf1KlhOBnQCzgatxODHhiI" +
+    "qalHct27CUKKU4mrqar777HqOlwuvNF$lUO2p6Q7DmbNKfkvHkkJj3Uwj57TQcVJ3gjTWMK" +
+    "lxaUuEn64dl4O$saEyDnc8eVzIcVJ3gjTWMaihFodsPnzLAMIaLgX#qQH#CUYssXPG7jMaV" +
+    "Z7ejjeMK1xHf7unwBRQ5bDzhqpuOzLhSzeXtKdm$rA9QsAyb49tL#ifOolrgFvNx1SfcrKn" +
+    "biq2vJ#sZSb#sIhLNc$R1gDVYjaUlq1wrX$ts24QxM#scSdVMezsbJVjWr6knBIIzFyQued" +
+    "FkL3k5Il5dDMg7xmt6BcTEh8xH9xeyA1MgxtnlCDPMVzEgjhkHxHx6OkJyrlS6OwqA7YPhd" +
+    "TgZCQOKdNERxmt6skhljZucplcDxmt6OaZbxs$bksz3Z3xHPQDOkKagL5$xtc0iXbA#Ga#8" +
+    "HxlLzmPZRVLtMkkSRptgK8Zn646hPtqoQb2BITmXsW$bNj5Ke19LgCOm3CSeAaSgXGRkbaB" +
+    "wiRedVHEPwAYcNAJndgFL5lCyt3eX7SdBqDDx7lPLW1aVHrSOK6Mk8yl#paYSJ0aKyB78#P" +
+    "ukqAuY2WPPzPAe7d4A4dg68cMUFAUUfqoPYvnYfMXT7UK0iL8#MlTyEbTdCKaYXL9qYw4ib" +
+    "cLiLqwaQrckSfnhnRwsh6XHTfaifNoUyYjRdZCNyvJVJVBj#sOwMaPwe2TweRVp#uQ#w8V#" +
+    "JalwtFBL8TywZhNIpYyaOenMFiyELRPZ3ybNI9yNcTBrWXNAmVcCUQrSV4UnzwqLRNNVHYl" +
+    "ZxFXBaZD25tFciN96Ajkr#uJAIt9MibJAxxVodF8LoiLeS$7kJVvUCpyoUfbtlEixzAxPfU" +
+    "nIjbFPZgjCVkzpVVRNYdoqyfovkCVB$$xCnQl35QBCLAuKPUTQeOoZxLoVrUH2AVzygCC#M" +
+    "S90CbYYl2GvE#nJ7YkdVDzshh$GvQ$PyjsNaxKLApluAWEm#Nd$YwMXP1fPvdwRzHfvZtnE" +
+    "3WDv1QI2p23BoPE4VVBU8bl9SI0$GMh9NC8##K#HDyc7P0TXdqHtqa3caTNaHV8s#OHi9wU" +
+    "1WZwaaImaQmdx5Bn3FYKjv1nGs9zC98l9El8oUPTyGGwHyq3H43A5B2MRoAlaVV8LEGeK5v" +
+    "9gCfEi84#Jryb7P1iv0PIaI0sPGrQIPmddNF8nsKcQWIJx93cdv7p2EIKvtYJdbEISadi9v" +
+    "vJYd5ASKufpId5EgOs4SqfzHWwG2q0f#vIoJ#aIie6yGjYdz4l2DUwMHyh9TCBpr6qzUOPy" +
+    "GBOGphkiI9zJdkGTPDTpveJlqzw6vG1fYOWVjEf7N7ygt2z2TyZrPy9j74ulKkxMQziw3jj" +
+    "7au4HyUbjQ6QxVX9P0FrRLu3xmlbbt2goHkzrmlK2rmilj76ibpBDDSPQ77EF1Iksn$Kd8t" +
+    "A#GOeYueki#cRHrykTjJHX31ydyvLg3DyJZYTrhDSpLa$VI4OmriZtRle$YchuV3HAq41Vo" +
+    "tWvVGEzHd$xN4s6amfIvNmRdS04UlrVbvNiCv5#2WeOBs1x8aqr6HR2ZbKwnqdmE8NEtcj2" +
+    "iVCD#oGUSoplmgDul76CJVqV3jrlkm==");
 
   public LangParser() {
     super(PARSING_TABLES);

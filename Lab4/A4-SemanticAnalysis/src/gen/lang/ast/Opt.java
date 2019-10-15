@@ -15,13 +15,6 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class Opt<T extends ASTNode> extends ASTNode<T> implements Cloneable {
   /**
-   * @aspect Visitor
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/Visitor.jrag:57
-   */
-  public Object accept(Visitor visitor, Object data) {
-		return visitor.visit(this, data);
-	}
-  /**
    * @declaredat ASTNode:1
    */
   public Opt() {
