@@ -1,0 +1,154 @@
+aspect Interpreter {
+    public static boolean ASTNode.isFuncInList(List<Func> funcs, String name) {
+        for(Func f : funcs) {
+            if(f.getDecl().getID().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void Program.eval() {
+        if(!isFuncInList(getFuncs(), "main")) {
+            throw new RuntimeException("Main not found");
+        }
+        for(Func f : getFuncs()) {
+            f.eval(new ActivationRecord());
+        }
+    }
+
+    abstract public int Stmt.eval(ActivationRecord actrec);
+    abstract public int Expr.eval(ActivationRecord actrec);
+
+    public int Func.eval(ActivationRecord actrec) {
+        System.out.println("In Func");
+        for(Stmt s : getBlock().getStmts()) {
+            s.eval(actrec);
+        }
+        return 1;
+        //throw new RuntimeException();
+    }
+
+
+    public int IfStmt.eval(ActivationRecord actrec) {
+        System.out.println("In IfStmt");
+        return 1;
+    }
+    public int ElseIfStmt.eval(ActivationRecord actrec) {
+        System.out.println("In ElseIf");
+        return 1;
+    }
+
+    public int ElseStmt.eval(ActivationRecord actrec) {
+        System.out.println("In ElseStmt");
+        return 1;
+    }
+    public int WhileStmt.eval(ActivationRecord actrec) {
+        System.out.println("In WhileStmt");
+        return 1;
+    }
+    public int ReturnStmt.eval(ActivationRecord actrec) {
+        System.out.println("In ReturnStmt");
+        return 1;
+    }
+
+    public int AssigmtUse.eval(ActivationRecord actrec) {
+        System.out.println("In AssmtUse");
+        return 1;
+    }
+
+    public int AssigmtStmt.eval(ActivationRecord actrec) {
+        System.out.println("In assigmt stmt");
+        if(hasRight()) {
+            actrec.store(getLeft().getID(), getRight().eval(actrec));
+        }
+        return 1;
+    }
+
+    public int FuncCall.eval(ActivationRecord actrec) {
+        System.out.println("in FuncCall");
+        IdDecl decl = lookup(getID().getID());
+        Func func = (Func) decl.getParent();
+        int i = 0;
+        for(Expr e : getArgs().getExprs()) {
+            actrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
+            i++;
+        }
+        return 1;
+    }
+
+    public int FuncCallArgs.eval(ActivationRecord actrec) {
+        for(Expr e : getExprs()) {
+            e.eval(actrec);
+        }
+        return 1;
+    }
+    public int IdUse.eval(ActivationRecord actrec) {
+        System.out.println("in IdUse");
+        return 1;
+    }
+
+    public int IdDecl.eval(ActivationRecord actrec) {
+        System.out.println("in IdDecl");
+        return 1;
+    }
+
+    /* --- Types: int --- */
+	public int Numeral.eval(ActivationRecord actrec) {
+	    System.out.println("in numeral");
+		return Integer.parseInt(getNUMERAL());
+	}
+
+    /* --- Math --- */
+    /* --- 1 => true --- */
+    /* --- 0 => false --- */
+	public int Add.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) + getRight().eval(actrec);
+	}
+	public int Sub.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) - getRight().eval(actrec);
+	}
+	public int Mul.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) * getRight().eval(actrec);
+	}
+	public int Div.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) / getRight().eval(actrec);
+	}
+	public int Mod.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) % getRight().eval(actrec);
+	}
+	public int GT.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) >  getRight().eval(actrec) ? 1 : 0;
+	}
+	public int LT.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) <  getRight().eval(actrec) ? 1 : 0;
+	}
+	public int GE.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) >= getRight().eval(actrec) ? 1 : 0;
+	}
+	public int LE.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) <= getRight().eval(actrec) ? 1 : 0;
+	}
+	public int EQ.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) == getRight().eval(actrec) ? 1 : 0;
+	}
+	public int NE.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) != getRight().eval(actrec) ? 1 : 0;
+	}
+
+	public class ActivationRecord {
+	    HashMap<String, Integer> map;
+
+        public ActivationRecord() {
+            this.map = new HashMap<>();
+        }
+
+        public void store(String name, Integer value) {
+            this.map.put(name, value);
+        }
+
+        public int get(String name) {
+            return this.map.get(name);
+        }
+    }
+}

@@ -1,0 +1,21 @@
+Program
+  List
+    FuncDecl
+      IdDecl ID="a"
+      Arg
+        Opt
+          List
+            AssgmtStmt
+              IdUse ID="x"
+              Opt
+            AssgmtStmt
+              IdUse ID="i"
+              Opt
+      Block
+        Opt
+    FuncDecl
+      IdDecl ID="b"
+      Arg
+        Opt
+      Block
+        Opt
