@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:29
@@ -24,11 +25,11 @@ public class IdUse extends Atomic implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:86
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:91
    */
   public int eval(ActivationRecord actrec) {
         System.out.println("in IdUse");
-        return 1;
+        return actrec.get(decl().getID());
     }
   /**
    * @declaredat ASTNode:1

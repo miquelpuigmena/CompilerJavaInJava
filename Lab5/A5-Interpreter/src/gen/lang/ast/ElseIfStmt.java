@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:25
@@ -17,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 public class ElseIfStmt extends Stmt implements Cloneable {
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:37
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:44
    */
   public int eval(ActivationRecord actrec) {
         System.out.println("In ElseIf");

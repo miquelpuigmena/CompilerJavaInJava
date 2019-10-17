@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:42
@@ -26,7 +27,7 @@ public class LT extends CompExpr implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:123
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:128
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) <  getRight().eval(actrec) ? 1 : 0;

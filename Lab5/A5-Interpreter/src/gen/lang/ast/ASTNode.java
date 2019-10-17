@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 /**
  * @ast node
  * @astdecl ASTNode;
@@ -110,7 +111,12 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:2
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:4
+   */
+  public static int DEFAULT_INT = 0;
+  /**
+   * @aspect Interpreter
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:5
    */
   public static boolean isFuncInList(List<Func> funcs, String name) {
         for(Func f : funcs) {

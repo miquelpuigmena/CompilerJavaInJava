@@ -1,4 +1,7 @@
+import java.util.HashMap;
+
 aspect Interpreter {
+    public static int ASTNode.DEFAULT_INT = 0;
     public static boolean ASTNode.isFuncInList(List<Func> funcs, String name) {
         for(Func f : funcs) {
             if(f.getDecl().getID().equals(name)) {
@@ -22,6 +25,10 @@ aspect Interpreter {
 
     public int Func.eval(ActivationRecord actrec) {
         System.out.println("In Func");
+        for(int i=0; i < getArgs().getIdDecls().size()-1; i++) {
+            //innerActrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
+            actrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
+        }
         for(Stmt s : getBlock().getStmts()) {
             s.eval(actrec);
         }
@@ -67,25 +74,23 @@ aspect Interpreter {
 
     public int FuncCall.eval(ActivationRecord actrec) {
         System.out.println("in FuncCall");
+        //ActivationRecord innerActrec = new ActivationRecord();
         IdDecl decl = lookup(getID().getID());
         Func func = (Func) decl.getParent();
         int i = 0;
         for(Expr e : getArgs().getExprs()) {
+            //innerActrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
             actrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
             i++;
         }
+        //func.eval(innerActrec);
+        func.eval(actrec);
         return 1;
     }
 
-    public int FuncCallArgs.eval(ActivationRecord actrec) {
-        for(Expr e : getExprs()) {
-            e.eval(actrec);
-        }
-        return 1;
-    }
     public int IdUse.eval(ActivationRecord actrec) {
         System.out.println("in IdUse");
-        return 1;
+        return actrec.get(decl().getID());
     }
 
     public int IdDecl.eval(ActivationRecord actrec) {
@@ -144,10 +149,12 @@ aspect Interpreter {
         }
 
         public void store(String name, Integer value) {
+            System.out.println("Storing name: "+name+", value: "+String.valueOf(value));
             this.map.put(name, value);
         }
 
         public int get(String name) {
+            System.out.println("Getting name: "+name);
             return this.map.get(name);
         }
     }

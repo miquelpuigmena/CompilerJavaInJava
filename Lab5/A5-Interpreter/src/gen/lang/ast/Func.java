@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:15
@@ -33,10 +34,14 @@ public class Func extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:23
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:26
    */
   public int eval(ActivationRecord actrec) {
         System.out.println("In Func");
+        for(int i=0; i < getArgs().getIdDecls().size()-1; i++) {
+            //innerActrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
+            actrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
+        }
         for(Stmt s : getBlock().getStmts()) {
             s.eval(actrec);
         }

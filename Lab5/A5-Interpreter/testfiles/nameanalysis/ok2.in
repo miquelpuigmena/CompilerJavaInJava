@@ -1,3 +1,7 @@
+int b(int a, int b) {
+    print(6);
+}
 int main() {
     print(3+3);
+    b(5+6, 6);
 }

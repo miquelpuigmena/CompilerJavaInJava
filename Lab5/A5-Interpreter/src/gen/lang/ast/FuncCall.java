@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:17
@@ -28,17 +29,21 @@ public class FuncCall extends Call implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:68
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:75
    */
   public int eval(ActivationRecord actrec) {
         System.out.println("in FuncCall");
+        //ActivationRecord innerActrec = new ActivationRecord();
         IdDecl decl = lookup(getID().getID());
         Func func = (Func) decl.getParent();
         int i = 0;
         for(Expr e : getArgs().getExprs()) {
+            //innerActrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
             actrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
             i++;
         }
+        //func.eval(innerActrec);
+        func.eval(actrec);
         return 1;
     }
   /**
