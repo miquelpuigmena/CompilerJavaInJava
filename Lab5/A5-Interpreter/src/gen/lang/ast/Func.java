@@ -49,9 +49,9 @@ public class Func extends Stmt implements Cloneable {
             System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
         } else if (getDecl().getID().equals("read")){
             return Integer.valueOf(this.scan.nextInt());
-        } else {
-            throw new RuntimeException("Return statement mimssing");
-        }
+        } //else {
+            //throw new RuntimeException("Return statement missing");
+        //}
         return 0;
     }
   /**
