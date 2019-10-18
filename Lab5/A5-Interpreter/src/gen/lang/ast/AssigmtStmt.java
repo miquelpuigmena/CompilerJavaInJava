@@ -35,13 +35,12 @@ public class AssigmtStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:105
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:96
    */
   public int eval(ActivationRecord actrec) {
-        //System.out.println("In assigmt stmt");
         if(hasRight()) {
             actrec.store(getLeft().uniqueName(), getRight().eval(actrec));
-        }else{ //doesnt have a right 
+        }else{
             getLeft().eval(actrec);
         }
         return 1;

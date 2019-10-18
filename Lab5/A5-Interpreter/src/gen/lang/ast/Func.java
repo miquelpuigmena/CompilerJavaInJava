@@ -38,14 +38,12 @@ public class Func extends Stmt implements Cloneable {
    * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:25
    */
   public int eval(ActivationRecord actrec) {
-        //System.out.println("In Func");
         try{
             getBlock().eval(actrec);
         }catch(Exception e){
             return Integer.valueOf(e.getMessage());
         }
         if(getDecl().getID().equals("print")){
-            //System.out.println("Print function reached... args: " + actrec.get(getDecl().uniqueName()));
             System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
         } else if (getDecl().getID().equals("read")){
             return Integer.valueOf(this.scan.nextInt());

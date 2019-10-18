@@ -43,10 +43,9 @@ public class IfStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:51
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:48
    */
   public int eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In IfStmt");
         int elseif_visit = 0;
         if(getCondition().eval(actrec) == 1){
             getThen().eval(actrec);

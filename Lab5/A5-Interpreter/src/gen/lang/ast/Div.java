@@ -28,7 +28,7 @@ public class Div extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:157
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:144
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) / getRight().eval(actrec);

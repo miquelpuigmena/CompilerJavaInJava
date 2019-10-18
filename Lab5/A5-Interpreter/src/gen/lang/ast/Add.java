@@ -28,7 +28,7 @@ public class Add extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:148
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:135
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) + getRight().eval(actrec);

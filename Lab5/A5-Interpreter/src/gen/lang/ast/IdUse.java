@@ -26,10 +26,9 @@ public class IdUse extends Atomic implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:128
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:117
    */
   public int eval(ActivationRecord actrec) {
-        //System.out.println("in IdUse");
         return actrec.get(decl().uniqueName());
     }
   /**

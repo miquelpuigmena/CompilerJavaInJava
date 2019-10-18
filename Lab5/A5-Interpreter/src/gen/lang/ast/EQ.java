@@ -28,7 +28,7 @@ public class EQ extends CompExpr implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:175
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:162
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) == getRight().eval(actrec) ? 1 : 0;

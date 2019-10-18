@@ -28,7 +28,7 @@ public class LE extends CompExpr implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:172
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:159
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) <= getRight().eval(actrec) ? 1 : 0;

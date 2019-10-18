@@ -19,10 +19,9 @@ import java.util.Scanner;
 public class ElseStmt extends Stmt implements Cloneable {
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:79
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:74
    */
   public int eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In ElseStmt");
         getBlock().eval(actrec);
         return 1;
     }

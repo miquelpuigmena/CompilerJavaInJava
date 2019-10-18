@@ -28,7 +28,7 @@ public class ReturnStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:94
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:86
    */
   public int eval(ActivationRecord actrec) throws Exception{
         //System.out.println("In ReturnStmt");

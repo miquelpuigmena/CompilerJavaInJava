@@ -35,10 +35,9 @@ public class AssigmtUse extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:99
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:91
    */
   public int eval(ActivationRecord actrec) {
-        //System.out.println("In AssmtUse");
         actrec.store(getLeft().decl().uniqueName(), getRight().eval(actrec));
         return 1;
     }

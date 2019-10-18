@@ -30,12 +30,10 @@ public class WhileStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:85
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:79
    */
   public int eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In WhileStmt");
         while(getCondition().eval(actrec)==1){
-            //ActivationRecord ar = new ActivationRecord(actrec.getMap());
             getThen().eval(actrec);
         }
         return 1;

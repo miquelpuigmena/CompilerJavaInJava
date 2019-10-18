@@ -30,10 +30,9 @@ public class FuncCall extends Call implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:115
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:105
    */
   public int eval(ActivationRecord actrec) {
-        //System.out.println("in FuncCall");
         ActivationRecord innerActrec = new ActivationRecord(new HashMap<String, Integer>());
         IdDecl decl = lookup(getID().getID());
         Func func = (Func) decl.getParent();

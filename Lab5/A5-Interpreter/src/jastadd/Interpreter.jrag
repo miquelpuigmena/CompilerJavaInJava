@@ -23,14 +23,12 @@ aspect Interpreter {
     abstract public int Expr.eval(ActivationRecord actrec);
 
     public int Func.eval(ActivationRecord actrec) {
-        //System.out.println("In Func");
         try{
             getBlock().eval(actrec);
         }catch(Exception e){
             return Integer.valueOf(e.getMessage());
         }
         if(getDecl().getID().equals("print")){
-            //System.out.println("Print function reached... args: " + actrec.get(getDecl().uniqueName()));
             System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
         } else if (getDecl().getID().equals("read")){
             return Integer.valueOf(this.scan.nextInt());
@@ -41,7 +39,6 @@ aspect Interpreter {
     }
 
     public int Block.eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In Block");
         for(Stmt s : getStmts()){
             s.eval(actrec);
         }
@@ -49,7 +46,6 @@ aspect Interpreter {
     }
 
     public int IfStmt.eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In IfStmt");
         int elseif_visit = 0;
         if(getCondition().eval(actrec) == 1){
             getThen().eval(actrec);
@@ -67,7 +63,6 @@ aspect Interpreter {
         return 1;
     }
     public int ElseIfStmt.eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In ElseIf");
         if(getCondition().eval(actrec) == 1){
             getThen().eval(actrec);
         } else{
@@ -77,15 +72,12 @@ aspect Interpreter {
     }
 
     public int ElseStmt.eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In ElseStmt");
         getBlock().eval(actrec);
         return 1;
     }
 
     public int WhileStmt.eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In WhileStmt");
         while(getCondition().eval(actrec)==1){
-            //ActivationRecord ar = new ActivationRecord(actrec.getMap());
             getThen().eval(actrec);
         }
         return 1;
@@ -97,23 +89,20 @@ aspect Interpreter {
     }
 
     public int AssigmtUse.eval(ActivationRecord actrec) {
-        //System.out.println("In AssmtUse");
         actrec.store(getLeft().decl().uniqueName(), getRight().eval(actrec));
         return 1;
     }
 
     public int AssigmtStmt.eval(ActivationRecord actrec) {
-        //System.out.println("In assigmt stmt");
         if(hasRight()) {
             actrec.store(getLeft().uniqueName(), getRight().eval(actrec));
-        }else{ //doesnt have a right 
+        }else{
             getLeft().eval(actrec);
         }
         return 1;
     }
 
     public int FuncCall.eval(ActivationRecord actrec) {
-        //System.out.println("in FuncCall");
         ActivationRecord innerActrec = new ActivationRecord(new HashMap<String, Integer>());
         IdDecl decl = lookup(getID().getID());
         Func func = (Func) decl.getParent();
@@ -126,12 +115,10 @@ aspect Interpreter {
     }
 
     public int IdUse.eval(ActivationRecord actrec) {
-        //System.out.println("in IdUse");
         return actrec.get(decl().uniqueName());
     }
 
     public int IdDecl.eval(ActivationRecord actrec) {
-        //System.out.println("in IdDecl");
         actrec.store(uniqueName(), DEFAULT_INT);
         return 1;
     }
@@ -187,13 +174,10 @@ aspect Interpreter {
         }
 
         public void store(String name, Integer value) {
-            //System.out.println("Storing name: "+name+", value: "+String.valueOf(value));
             this.map.put(name, value);
         }
 
         public int get(String name) {
-            //System.out.println("Getting name: "+name);
-            //System.out.println(this.map.keySet());
             return this.map.get(name);
         }
         public HashMap getMap(){

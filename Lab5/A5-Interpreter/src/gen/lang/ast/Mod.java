@@ -28,7 +28,7 @@ public class Mod extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:160
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:147
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) % getRight().eval(actrec);

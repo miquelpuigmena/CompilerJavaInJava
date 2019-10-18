@@ -26,7 +26,7 @@ public class Numeral extends Atomic implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:140
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:127
    */
   public int eval(ActivationRecord actrec) {
 	    //System.out.println("in numeral");

@@ -12,7 +12,7 @@ import java.util.Scanner;
 /**
  * @ast class
  * @aspect Interpreter
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:182
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:169
  */
 public class ActivationRecord extends java.lang.Object {
   
@@ -27,15 +27,12 @@ public class ActivationRecord extends java.lang.Object {
   
 
         public void store(String name, Integer value) {
-            //System.out.println("Storing name: "+name+", value: "+String.valueOf(value));
             this.map.put(name, value);
         }
 
   
 
         public int get(String name) {
-            //System.out.println("Getting name: "+name);
-            //System.out.println(this.map.keySet());
             return this.map.get(name);
         }
 

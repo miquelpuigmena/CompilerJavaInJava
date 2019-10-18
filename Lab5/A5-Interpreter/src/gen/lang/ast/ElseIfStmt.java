@@ -19,10 +19,9 @@ import java.util.Scanner;
 public class ElseIfStmt extends Stmt implements Cloneable {
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:69
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:65
    */
   public int eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In ElseIf");
         if(getCondition().eval(actrec) == 1){
             getThen().eval(actrec);
         } else{

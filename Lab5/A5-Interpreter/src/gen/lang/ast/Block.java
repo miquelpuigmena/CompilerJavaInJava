@@ -19,10 +19,9 @@ import java.util.Scanner;
 public class Block extends ASTNode<ASTNode> implements Cloneable {
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:43
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:41
    */
   public int eval(ActivationRecord actrec) throws Exception{
-        //System.out.println("In Block");
         for(Stmt s : getStmts()){
             s.eval(actrec);
         }

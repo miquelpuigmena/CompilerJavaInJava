@@ -27,10 +27,9 @@ public class IdDecl extends Atomic implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:133
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:121
    */
   public int eval(ActivationRecord actrec) {
-        //System.out.println("in IdDecl");
         actrec.store(uniqueName(), DEFAULT_INT);
         return 1;
     }
