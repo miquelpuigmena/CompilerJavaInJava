@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @astdecl ASTNode;
@@ -111,20 +112,25 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:4
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:5
    */
   public static int DEFAULT_INT = 0;
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:5
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:6
    */
-  public static boolean isFuncInList(List<Func> funcs, String name) {
+  public static Scanner scan = new Scanner(System.in);
+  /**
+   * @aspect Interpreter
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:8
+   */
+  public static Func isFuncInList(List<Func> funcs, String name) {
         for(Func f : funcs) {
             if(f.getDecl().getID().equals(name)) {
-                return true;
+                return f;
             }
         }
-        return false;
+        throw new RuntimeException("No" + name + "function");
     }
   /**
    * @declaredat ASTNode:1
@@ -800,7 +806,7 @@ protected boolean BoolType_visited = false;
   }
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:66
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */
@@ -820,7 +826,7 @@ protected boolean BoolType_visited = false;
   }
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:87
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:98
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:15
@@ -34,19 +35,24 @@ public class Func extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:26
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:25
    */
   public int eval(ActivationRecord actrec) {
-        System.out.println("In Func");
-        for(int i=0; i < getArgs().getIdDecls().size()-1; i++) {
-            //innerActrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
-            actrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
+        //System.out.println("In Func");
+        try{
+            getBlock().eval(actrec);
+        }catch(Exception e){
+            return Integer.valueOf(e.getMessage());
         }
-        for(Stmt s : getBlock().getStmts()) {
-            s.eval(actrec);
+        if(getDecl().getID().equals("print")){
+            //System.out.println("Print function reached... args: " + actrec.get(getDecl().uniqueName()));
+            System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
+        } else if (getDecl().getID().equals("read")){
+            return Integer.valueOf(this.scan.nextInt());
+        } else {
+            throw new RuntimeException("Return statement mimssing");
         }
-        return 1;
-        //throw new RuntimeException();
+        return 0;
     }
   /**
    * @declaredat ASTNode:1
@@ -269,10 +275,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:42
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:53
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:42")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:53")
   public IdDecl localLookup(String name) {
     Object _parameters = name;
     if (localLookup_String_visited == null) localLookup_String_visited = new java.util.HashSet(4);
@@ -295,10 +301,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:44
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:44")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);
@@ -329,12 +335,12 @@ protected java.util.Set lookup_String_visited;
   protected java.util.Map lookup_String_values;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:14
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
    * @apilevel internal
    */
   public IdDecl Define_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
     if (_callerNode == getBlockNoTransform()) {
-      // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:46
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:57
       {
       		for(IdDecl idDecl : getArgs().getIdDecls()){
       			if(idDecl.getID().equals(name)){
@@ -349,7 +355,7 @@ protected java.util.Set lookup_String_visited;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:14
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */

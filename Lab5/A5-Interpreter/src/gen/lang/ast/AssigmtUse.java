@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:21
@@ -34,10 +35,11 @@ public class AssigmtUse extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:62
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:99
    */
   public int eval(ActivationRecord actrec) {
-        System.out.println("In AssmtUse");
+        //System.out.println("In AssmtUse");
+        actrec.store(getLeft().decl().uniqueName(), getRight().eval(actrec));
         return 1;
     }
   /**
@@ -223,10 +225,10 @@ public class AssigmtUse extends Stmt implements Cloneable {
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:65
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:76
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:65")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:76")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);

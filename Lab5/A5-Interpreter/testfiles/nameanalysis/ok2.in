@@ -1,7 +1,15 @@
-int b(int a, int b) {
-    print(6);
-}
 int main() {
-    print(3+3);
-    b(5+6, 6);
+  int x = 0;
+  int sum = 0;
+  while (x < 3) {
+    if (x < 2) {
+      int x;
+      x = 13;
+      sum = sum + x;
+    }
+    sum = sum + 1;
+    x = x + 1;
+  }
+  print(sum);
+  return 0;
 }

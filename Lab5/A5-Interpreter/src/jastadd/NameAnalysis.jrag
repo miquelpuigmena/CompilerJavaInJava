@@ -9,6 +9,17 @@ aspect NameAnalysis {
     }
 
 	inh IdDecl IdUse.lookup(String name);
+	//inh String IdDecl.uniqueName();
+	syn String IdDecl.uniqueName() {
+	    ASTNode parent = getParent();
+	    String id = getID();
+	    while(!Program.class.isInstance(parent)) {
+	        id = id+"_"+parent.getClass().getName();
+	        parent = parent.getParent();
+	    }
+	    return id;
+	}
+
 	syn IdDecl IdUse.decl() = lookup(getID());
 
 	inh IdDecl IdDecl.lookup(String name);

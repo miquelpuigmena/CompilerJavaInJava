@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:17
@@ -29,22 +30,19 @@ public class FuncCall extends Call implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:75
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:115
    */
   public int eval(ActivationRecord actrec) {
-        System.out.println("in FuncCall");
-        //ActivationRecord innerActrec = new ActivationRecord();
+        //System.out.println("in FuncCall");
+        ActivationRecord innerActrec = new ActivationRecord(new HashMap<String, Integer>());
         IdDecl decl = lookup(getID().getID());
         Func func = (Func) decl.getParent();
         int i = 0;
         for(Expr e : getArgs().getExprs()) {
-            //innerActrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
-            actrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
+            innerActrec.store(func.getArgs().getIdDecl(i).uniqueName(), e.eval(actrec));
             i++;
         }
-        //func.eval(innerActrec);
-        func.eval(actrec);
-        return 1;
+        return func.eval(innerActrec);
     }
   /**
    * @declaredat ASTNode:1
@@ -244,10 +242,10 @@ protected boolean areArgsIncorrect_visited = false;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:16
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:27
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:16")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:27")
   public boolean areArgsIncorrect() {
     ASTState state = state();
     if (areArgsIncorrect_computed) {
@@ -323,10 +321,10 @@ protected boolean type_visited = false;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:41
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:52
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:41")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:52")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);

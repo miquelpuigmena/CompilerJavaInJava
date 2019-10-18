@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:20
@@ -34,12 +35,14 @@ public class AssigmtStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:67
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:105
    */
   public int eval(ActivationRecord actrec) {
-        System.out.println("In assigmt stmt");
+        //System.out.println("In assigmt stmt");
         if(hasRight()) {
-            actrec.store(getLeft().getID(), getRight().eval(actrec));
+            actrec.store(getLeft().uniqueName(), getRight().eval(actrec));
+        }else{ //doesnt have a right 
+            getLeft().eval(actrec);
         }
         return 1;
     }
@@ -263,10 +266,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:37
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:48
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:37")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:48")
   public IdDecl localLookup(String name) {
     Object _parameters = name;
     if (localLookup_String_visited == null) localLookup_String_visited = new java.util.HashSet(4);
@@ -293,10 +296,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute inh
    * @aspect CircularDefinitions
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:86
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:97
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:86")
+  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:97")
   public boolean inExprOf(IdDecl decl) {
     Object _parameters = decl;
     if (inExprOf_IdDecl_visited == null) inExprOf_IdDecl_visited = new java.util.HashSet(4);
@@ -327,12 +330,12 @@ protected java.util.Set inExprOf_IdDecl_visited;
   protected java.util.Map inExprOf_IdDecl_values;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:85
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
    * @apilevel internal
    */
   public boolean Define_inExprOf(ASTNode _callerNode, ASTNode _childNode, IdDecl decl) {
     if (_callerNode == getRightOptNoTransform()) {
-      // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:87
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:98
       return getLeft() == decl || inExprOf(decl);
     }
     else {
@@ -340,7 +343,7 @@ protected java.util.Set inExprOf_IdDecl_visited;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:85
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */

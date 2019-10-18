@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:3
@@ -18,9 +19,9 @@ import java.util.HashMap;
 public abstract class Stmt extends ASTNode<ASTNode> implements Cloneable {
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:23
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:22
    */
-  abstract public int eval(ActivationRecord actrec);
+  abstract public int eval(ActivationRecord actrec) throws Exception;
   /**
    * @declaredat ASTNode:1
    */
@@ -103,10 +104,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:35
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:46
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:35")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:46")
   public IdDecl localLookup(String name) {
     Object _parameters = name;
     if (localLookup_String_visited == null) localLookup_String_visited = new java.util.HashSet(4);
@@ -129,10 +130,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:34
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:45
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:34")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:45")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);

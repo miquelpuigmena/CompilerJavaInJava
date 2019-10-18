@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:22
@@ -27,11 +28,11 @@ public class ReturnStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:57
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:94
    */
-  public int eval(ActivationRecord actrec) {
-        System.out.println("In ReturnStmt");
-        return 1;
+  public int eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In ReturnStmt");
+        throw new Exception(String.valueOf(getReturn().eval(actrec)));
     }
   /**
    * @declaredat ASTNode:1

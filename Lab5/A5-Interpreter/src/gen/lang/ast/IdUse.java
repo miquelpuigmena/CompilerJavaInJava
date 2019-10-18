@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:29
@@ -25,11 +26,11 @@ public class IdUse extends Atomic implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:91
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:128
    */
   public int eval(ActivationRecord actrec) {
-        System.out.println("in IdUse");
-        return actrec.get(decl().getID());
+        //System.out.println("in IdUse");
+        return actrec.get(decl().uniqueName());
     }
   /**
    * @declaredat ASTNode:1
@@ -223,10 +224,10 @@ protected boolean decl_visited = false;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:12
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:23
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:12")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:23")
   public IdDecl decl() {
     ASTState state = state();
     if (decl_computed) {
@@ -259,10 +260,10 @@ protected boolean isCircular_visited = false;
   /**
    * @attribute syn
    * @aspect CircularDefinitions
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:84
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:95
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:84")
+  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:95")
   public boolean isCircular() {
     ASTState state = state();
     if (isCircular_computed) {
@@ -356,10 +357,10 @@ protected java.util.Set lookup_String_visited;
   /**
    * @attribute inh
    * @aspect CircularDefinitions
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:85
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:85")
+  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96")
   public boolean inExprOf(IdDecl decl) {
     Object _parameters = decl;
     if (inExprOf_IdDecl_visited == null) inExprOf_IdDecl_visited = new java.util.HashSet(4);

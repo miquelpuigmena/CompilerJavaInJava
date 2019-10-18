@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:23
@@ -29,10 +30,14 @@ public class WhileStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:53
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:85
    */
-  public int eval(ActivationRecord actrec) {
-        System.out.println("In WhileStmt");
+  public int eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In WhileStmt");
+        while(getCondition().eval(actrec)==1){
+            //ActivationRecord ar = new ActivationRecord(actrec.getMap());
+            getThen().eval(actrec);
+        }
         return 1;
     }
   /**

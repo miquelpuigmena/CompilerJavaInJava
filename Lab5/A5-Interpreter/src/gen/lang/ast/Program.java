@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:1
@@ -25,15 +26,11 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:14
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:17
    */
   public void eval() {
-        if(!isFuncInList(getFuncs(), "main")) {
-            throw new RuntimeException("Main not found");
-        }
-        for(Func f : getFuncs()) {
-            f.eval(new ActivationRecord());
-        }
+        Func f_main = isFuncInList(getFuncs(), "main");
+        f_main.eval(new ActivationRecord(new HashMap<String, Integer>()));
     }
   /**
    * @declaredat ASTNode:1
@@ -548,7 +545,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:14
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
    * @apilevel internal
    */
   public IdDecl Define_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
@@ -568,7 +565,7 @@ protected boolean BoolType_visited = false;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:14
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */
@@ -576,7 +573,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:85
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
    * @apilevel internal
    */
   public boolean Define_inExprOf(ASTNode _callerNode, ASTNode _childNode, IdDecl decl) {
@@ -584,7 +581,7 @@ protected boolean BoolType_visited = false;
     return false;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:85
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */

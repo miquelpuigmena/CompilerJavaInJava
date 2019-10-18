@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:24
@@ -42,10 +43,24 @@ public class IfStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:40
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:51
    */
-  public int eval(ActivationRecord actrec) {
-        System.out.println("In IfStmt");
+  public int eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In IfStmt");
+        int elseif_visit = 0;
+        if(getCondition().eval(actrec) == 1){
+            getThen().eval(actrec);
+        } else{
+            for(ElseIfStmt e : getElif().getElseIfStmts()){
+                elseif_visit = e.eval(actrec);
+                if(elseif_visit == 1){
+                    break;
+                }
+            }
+            if(hasElse() && elseif_visit == 0){
+                getElse().eval(actrec);
+            }
+        }
         return 1;
     }
   /**

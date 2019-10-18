@@ -1,106 +1,144 @@
 import java.util.HashMap;
+import java.util.Scanner;
 
 aspect Interpreter {
     public static int ASTNode.DEFAULT_INT = 0;
-    public static boolean ASTNode.isFuncInList(List<Func> funcs, String name) {
+    public static Scanner ASTNode.scan = new Scanner(System.in);
+
+    public static Func ASTNode.isFuncInList(List<Func> funcs, String name) {
         for(Func f : funcs) {
             if(f.getDecl().getID().equals(name)) {
-                return true;
+                return f;
             }
         }
-        return false;
+        throw new RuntimeException("No" + name + "function");
     }
 
     public void Program.eval() {
-        if(!isFuncInList(getFuncs(), "main")) {
-            throw new RuntimeException("Main not found");
-        }
-        for(Func f : getFuncs()) {
-            f.eval(new ActivationRecord());
-        }
+        Func f_main = isFuncInList(getFuncs(), "main");
+        f_main.eval(new ActivationRecord(new HashMap<String, Integer>()));
     }
 
-    abstract public int Stmt.eval(ActivationRecord actrec);
+    abstract public int Stmt.eval(ActivationRecord actrec) throws Exception;
     abstract public int Expr.eval(ActivationRecord actrec);
 
     public int Func.eval(ActivationRecord actrec) {
-        System.out.println("In Func");
-        for(int i=0; i < getArgs().getIdDecls().size()-1; i++) {
-            //innerActrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
-            actrec.store(getArgs().getIdDecl(i).getID(), DEFAULT_INT);
+        //System.out.println("In Func");
+        try{
+            getBlock().eval(actrec);
+        }catch(Exception e){
+            return Integer.valueOf(e.getMessage());
         }
-        for(Stmt s : getBlock().getStmts()) {
+        if(getDecl().getID().equals("print")){
+            //System.out.println("Print function reached... args: " + actrec.get(getDecl().uniqueName()));
+            System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
+        } else if (getDecl().getID().equals("read")){
+            return Integer.valueOf(this.scan.nextInt());
+        } else {
+            throw new RuntimeException("Return statement mimssing");
+        }
+        return 0;
+    }
+
+    public int Block.eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In Block");
+        for(Stmt s : getStmts()){
             s.eval(actrec);
         }
         return 1;
-        //throw new RuntimeException();
     }
 
+    public int IfStmt.eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In IfStmt");
+        int elseif_visit = 0;
+        if(getCondition().eval(actrec) == 1){
+            getThen().eval(actrec);
+        } else{
+            for(ElseIfStmt e : getElif().getElseIfStmts()){
+                elseif_visit = e.eval(actrec);
+                if(elseif_visit == 1){
+                    break;
+                }
+            }
+            if(hasElse() && elseif_visit == 0){
+                getElse().eval(actrec);
+            }
+        }
+        return 1;
+    }
+    public int ElseIfStmt.eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In ElseIf");
+        if(getCondition().eval(actrec) == 1){
+            getThen().eval(actrec);
+        } else{
+            return 0;
+        }
+        return 1;
+    }
 
-    public int IfStmt.eval(ActivationRecord actrec) {
-        System.out.println("In IfStmt");
-        return 1;
-    }
-    public int ElseIfStmt.eval(ActivationRecord actrec) {
-        System.out.println("In ElseIf");
+    public int ElseStmt.eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In ElseStmt");
+        getBlock().eval(actrec);
         return 1;
     }
 
-    public int ElseStmt.eval(ActivationRecord actrec) {
-        System.out.println("In ElseStmt");
+    public int WhileStmt.eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In WhileStmt");
+        while(getCondition().eval(actrec)==1){
+            //ActivationRecord ar = new ActivationRecord(actrec.getMap());
+            getThen().eval(actrec);
+        }
         return 1;
     }
-    public int WhileStmt.eval(ActivationRecord actrec) {
-        System.out.println("In WhileStmt");
-        return 1;
-    }
-    public int ReturnStmt.eval(ActivationRecord actrec) {
-        System.out.println("In ReturnStmt");
-        return 1;
+
+    public int ReturnStmt.eval(ActivationRecord actrec) throws Exception{
+        //System.out.println("In ReturnStmt");
+        throw new Exception(String.valueOf(getReturn().eval(actrec)));
     }
 
     public int AssigmtUse.eval(ActivationRecord actrec) {
-        System.out.println("In AssmtUse");
+        //System.out.println("In AssmtUse");
+        actrec.store(getLeft().decl().uniqueName(), getRight().eval(actrec));
         return 1;
     }
 
     public int AssigmtStmt.eval(ActivationRecord actrec) {
-        System.out.println("In assigmt stmt");
+        //System.out.println("In assigmt stmt");
         if(hasRight()) {
-            actrec.store(getLeft().getID(), getRight().eval(actrec));
+            actrec.store(getLeft().uniqueName(), getRight().eval(actrec));
+        }else{ //doesnt have a right 
+            getLeft().eval(actrec);
         }
         return 1;
     }
 
     public int FuncCall.eval(ActivationRecord actrec) {
-        System.out.println("in FuncCall");
-        //ActivationRecord innerActrec = new ActivationRecord();
+        //System.out.println("in FuncCall");
+        ActivationRecord innerActrec = new ActivationRecord(new HashMap<String, Integer>());
         IdDecl decl = lookup(getID().getID());
         Func func = (Func) decl.getParent();
         int i = 0;
         for(Expr e : getArgs().getExprs()) {
-            //innerActrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
-            actrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
+            innerActrec.store(func.getArgs().getIdDecl(i).uniqueName(), e.eval(actrec));
             i++;
         }
-        //func.eval(innerActrec);
-        func.eval(actrec);
-        return 1;
+        return func.eval(innerActrec);
     }
 
     public int IdUse.eval(ActivationRecord actrec) {
-        System.out.println("in IdUse");
-        return actrec.get(decl().getID());
+        //System.out.println("in IdUse");
+        return actrec.get(decl().uniqueName());
     }
 
     public int IdDecl.eval(ActivationRecord actrec) {
-        System.out.println("in IdDecl");
+        //System.out.println("in IdDecl");
+        actrec.store(uniqueName(), DEFAULT_INT);
         return 1;
     }
 
     /* --- Types: int --- */
 	public int Numeral.eval(ActivationRecord actrec) {
-	    System.out.println("in numeral");
+	    //System.out.println("in numeral");
 		return Integer.parseInt(getNUMERAL());
 	}
 
@@ -144,18 +182,22 @@ aspect Interpreter {
 	public class ActivationRecord {
 	    HashMap<String, Integer> map;
 
-        public ActivationRecord() {
-            this.map = new HashMap<>();
+        public ActivationRecord(HashMap map) {
+            this.map = new HashMap<>(map);
         }
 
         public void store(String name, Integer value) {
-            System.out.println("Storing name: "+name+", value: "+String.valueOf(value));
+            //System.out.println("Storing name: "+name+", value: "+String.valueOf(value));
             this.map.put(name, value);
         }
 
         public int get(String name) {
-            System.out.println("Getting name: "+name);
+            //System.out.println("Getting name: "+name);
+            //System.out.println(this.map.keySet());
             return this.map.get(name);
+        }
+        public HashMap getMap(){
+            return (HashMap<String, Integer>) this.map.clone();
         }
     }
 }

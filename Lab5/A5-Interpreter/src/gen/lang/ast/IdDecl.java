@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Scanner;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:31
@@ -26,10 +27,11 @@ public class IdDecl extends Atomic implements Cloneable {
 	}
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:96
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:133
    */
   public int eval(ActivationRecord actrec) {
-        System.out.println("in IdDecl");
+        //System.out.println("in IdDecl");
+        actrec.store(uniqueName(), DEFAULT_INT);
         return 1;
     }
   /**
@@ -76,25 +78,26 @@ public class IdDecl extends Atomic implements Cloneable {
   public void flushAttrCache() {
     super.flushAttrCache();
     isUnknown_reset();
+    uniqueName_reset();
     isMultiDeclared_reset();
     type_reset();
     lookup_String_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:36
+   * @declaredat ASTNode:37
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:40
+   * @declaredat ASTNode:41
    */
   public IdDecl clone() throws CloneNotSupportedException {
     IdDecl node = (IdDecl) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:45
+   * @declaredat ASTNode:46
    */
   public IdDecl copy() {
     try {
@@ -114,7 +117,7 @@ public class IdDecl extends Atomic implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:64
+   * @declaredat ASTNode:65
    */
   @Deprecated
   public IdDecl fullCopy() {
@@ -125,7 +128,7 @@ public class IdDecl extends Atomic implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:74
+   * @declaredat ASTNode:75
    */
   public IdDecl treeCopyNoTransform() {
     IdDecl tree = (IdDecl) copy();
@@ -146,7 +149,7 @@ public class IdDecl extends Atomic implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:94
+   * @declaredat ASTNode:95
    */
   public IdDecl treeCopy() {
     IdDecl tree = (IdDecl) copy();
@@ -162,7 +165,7 @@ public class IdDecl extends Atomic implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:108
+   * @declaredat ASTNode:109
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node) && (tokenString_ID == ((IdDecl) node).tokenString_ID);    
@@ -242,6 +245,54 @@ protected boolean isUnknown_visited = false;
     return isUnknown_value;
   }
 /** @apilevel internal */
+protected boolean uniqueName_visited = false;
+  /** @apilevel internal */
+  private void uniqueName_reset() {
+    uniqueName_computed = false;
+    
+    uniqueName_value = null;
+    uniqueName_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean uniqueName_computed = false;
+
+  /** @apilevel internal */
+  protected String uniqueName_value;
+
+  /**
+   * @attribute syn
+   * @aspect NameAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:13
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:13")
+  public String uniqueName() {
+    ASTState state = state();
+    if (uniqueName_computed) {
+      return uniqueName_value;
+    }
+    if (uniqueName_visited) {
+      throw new RuntimeException("Circular definition of attribute IdDecl.uniqueName().");
+    }
+    uniqueName_visited = true;
+    state().enterLazyAttribute();
+    uniqueName_value = uniqueName_compute();
+    uniqueName_computed = true;
+    state().leaveLazyAttribute();
+    uniqueName_visited = false;
+    return uniqueName_value;
+  }
+  /** @apilevel internal */
+  private String uniqueName_compute() {
+  	    ASTNode parent = getParent();
+  	    String id = getID();
+  	    while(!Program.class.isInstance(parent)) {
+  	        id = id+"_"+parent.getClass().getName();
+  	        parent = parent.getParent();
+  	    }
+  	    return id;
+  	}
+/** @apilevel internal */
 protected boolean isMultiDeclared_visited = false;
   /** @apilevel internal */
   private void isMultiDeclared_reset() {
@@ -257,10 +308,10 @@ protected boolean isMultiDeclared_visited = false;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:15
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:26
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:15")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:26")
   public boolean isMultiDeclared() {
     ASTState state = state();
     if (isMultiDeclared_computed) {
@@ -318,10 +369,10 @@ protected boolean type_visited = false;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:14
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:14")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);
