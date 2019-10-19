@@ -5,7 +5,7 @@ aspect Interpreter {
     public static int ASTNode.DEFAULT_INT = 0;
     public static Scanner ASTNode.scan = new Scanner(System.in);
 
-    public static Func ASTNode.isFuncInList(List<Func> funcs, String name) {
+    public static Func ASTNode.getFuncFromList(List<Func> funcs, String name) {
         for(Func f : funcs) {
             if(f.getDecl().getID().equals(name)) {
                 return f;
@@ -15,7 +15,7 @@ aspect Interpreter {
     }
 
     public void Program.eval() {
-        Func f_main = isFuncInList(getFuncs(), "main");
+        Func f_main = getFuncFromList(getFuncs(), "main");
         f_main.eval(new ActivationRecord(new HashMap<String, Integer>()));
     }
 

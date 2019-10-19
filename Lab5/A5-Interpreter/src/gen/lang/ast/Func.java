@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Scanner;
 /**
@@ -93,23 +94,28 @@ public class Func extends Stmt implements Cloneable {
   public void flushAttrCache() {
     super.flushAttrCache();
     localLookup_String_reset();
+    isUnknown_reset();
     lookup_String_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:34
+   * @declaredat ASTNode:35
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
+    Func_functionCalls_visited = false;
+    Func_functionCalls_computed = false;
+    
+    Func_functionCalls_value = null;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:38
+   * @declaredat ASTNode:43
    */
   public Func clone() throws CloneNotSupportedException {
     Func node = (Func) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:43
+   * @declaredat ASTNode:48
    */
   public Func copy() {
     try {
@@ -129,7 +135,7 @@ public class Func extends Stmt implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:62
+   * @declaredat ASTNode:67
    */
   @Deprecated
   public Func fullCopy() {
@@ -140,7 +146,7 @@ public class Func extends Stmt implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:72
+   * @declaredat ASTNode:77
    */
   public Func treeCopyNoTransform() {
     Func tree = (Func) copy();
@@ -161,7 +167,7 @@ public class Func extends Stmt implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:92
+   * @declaredat ASTNode:97
    */
   public Func treeCopy() {
     Func tree = (Func) copy();
@@ -177,7 +183,7 @@ public class Func extends Stmt implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:106
+   * @declaredat ASTNode:111
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node);    
@@ -273,10 +279,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:53
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:56
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:53")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:56")
   public IdDecl localLookup(String name) {
     Object _parameters = name;
     if (localLookup_String_visited == null) localLookup_String_visited = new java.util.HashSet(4);
@@ -296,13 +302,49 @@ protected java.util.Set localLookup_String_visited;
     localLookup_String_visited.remove(_parameters);
     return localLookup_String_value;
   }
+/** @apilevel internal */
+protected boolean isUnknown_visited = false;
+  /** @apilevel internal */
+  private void isUnknown_reset() {
+    isUnknown_computed = false;
+    isUnknown_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean isUnknown_computed = false;
+
+  /** @apilevel internal */
+  protected boolean isUnknown_value;
+
+  /**
+   * @attribute syn
+   * @aspect UnknownFunc
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/UnknownFunc.jrag:7
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="UnknownFunc", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/UnknownFunc.jrag:7")
+  public boolean isUnknown() {
+    ASTState state = state();
+    if (isUnknown_computed) {
+      return isUnknown_value;
+    }
+    if (isUnknown_visited) {
+      throw new RuntimeException("Circular definition of attribute Func.isUnknown().");
+    }
+    isUnknown_visited = true;
+    state().enterLazyAttribute();
+    isUnknown_value = false;
+    isUnknown_computed = true;
+    state().leaveLazyAttribute();
+    isUnknown_visited = false;
+    return isUnknown_value;
+  }
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:58
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:58")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);
@@ -333,12 +375,12 @@ protected java.util.Set lookup_String_visited;
   protected java.util.Map lookup_String_values;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:28
    * @apilevel internal
    */
   public IdDecl Define_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
     if (_callerNode == getBlockNoTransform()) {
-      // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:57
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:60
       {
       		for(IdDecl idDecl : getArgs().getIdDecls()){
       			if(idDecl.getID().equals(name)){
@@ -353,11 +395,74 @@ protected java.util.Set lookup_String_visited;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:28
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */
   protected boolean canDefine_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
     return true;
   }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @apilevel internal
+   */
+  public Func Define_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
+    int childIndex = this.getIndexOfChild(_callerNode);
+    return this;
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @apilevel internal
+   * @return {@code true} if this node has an equation for the inherited attribute enclosingFunction
+   */
+  protected boolean canDefine_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
+    return true;
+  }
+/** @apilevel internal */
+protected boolean Func_functionCalls_visited = false;
+  /**
+   * @attribute coll
+   * @aspect FunctionCalls
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:5
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.COLL)
+  @ASTNodeAnnotation.Source(aspect="FunctionCalls", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:5")
+  public HashSet<Func> functionCalls() {
+    ASTState state = state();
+    if (Func_functionCalls_computed) {
+      return Func_functionCalls_value;
+    }
+    if (Func_functionCalls_visited) {
+      throw new RuntimeException("Circular definition of attribute Func.functionCalls().");
+    }
+    Func_functionCalls_visited = true;
+    state().enterLazyAttribute();
+    Func_functionCalls_value = functionCalls_compute();
+    Func_functionCalls_computed = true;
+    state().leaveLazyAttribute();
+    Func_functionCalls_visited = false;
+    return Func_functionCalls_value;
+  }
+  /** @apilevel internal */
+  private HashSet<Func> functionCalls_compute() {
+    ASTNode node = this;
+    while (node != null && !(node instanceof Program)) {
+      node = node.getParent();
+    }
+    Program root = (Program) node;
+    root.survey_Func_functionCalls();
+    HashSet<Func> _computedValue = new HashSet<Func>();
+    if (root.contributorMap_Func_functionCalls.containsKey(this)) {
+      for (ASTNode contributor : root.contributorMap_Func_functionCalls.get(this)) {
+        contributor.contributeTo_Func_functionCalls(_computedValue);
+      }
+    }
+    return _computedValue;
+  }
+  /** @apilevel internal */
+  protected boolean Func_functionCalls_computed = false;
+
+  /** @apilevel internal */
+  protected HashSet<Func> Func_functionCalls_value;
+
 }

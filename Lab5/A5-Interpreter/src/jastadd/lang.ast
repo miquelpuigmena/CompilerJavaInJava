@@ -16,6 +16,7 @@ Func                : Stmt          ::= Decl:IdDecl Args:FuncArgs Block:Block;
 FuncArgs                            ::= IdDecl*;
 FuncCall            : Call          ::= ID:IdUse Args:FuncCallArgs;
 FuncCallArgs                        ::= Expr*;
+UnknownFunc         : Func;
 
 AssigmtStmt         : Stmt          ::= Left:IdDecl [Right:Expr];
 AssigmtUse          : Stmt          ::= Left:IdUse  Right:Expr;

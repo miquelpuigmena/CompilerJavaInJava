@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import beaver.Parser.Exception;
 
 import lang.ast.Program;
+import lang.ast.Func;
 import lang.ast.LangParser;
 import lang.ast.LangScanner;
 import lang.ast.ErrorMessage;
@@ -46,7 +47,15 @@ public class Interpreter {
                 }
                 System.exit(1);
             }
+
             program.eval();
+            for(Func f : program.getFuncs()) {
+                System.out.println("**************************");
+                System.out.println(f.getDecl().getID());
+                f.functionCalls().forEach(System.out::println);
+                System.out.println("------------------------");
+
+            }
             DrAST_root_node = program; //Enable debugging with DrAST
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");

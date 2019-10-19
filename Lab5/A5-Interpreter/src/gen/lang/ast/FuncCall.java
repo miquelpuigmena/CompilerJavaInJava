@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Scanner;
 /**
@@ -241,10 +242,10 @@ protected boolean areArgsIncorrect_visited = false;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:27
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:30
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:27")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:30")
   public boolean areArgsIncorrect() {
     ASTState state = state();
     if (areArgsIncorrect_computed) {
@@ -320,10 +321,10 @@ protected boolean type_visited = false;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:52
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:52")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:55")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);
@@ -370,10 +371,33 @@ protected java.util.Set lookup_String_visited;
     super.collect_contributors_Program_errors(_root, _map);
   }
   /** @apilevel internal */
+  protected void collect_contributors_Func_functionCalls(Program _root, java.util.Map<ASTNode, java.util.Set<ASTNode>> _map) {
+    // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:15
+    if (true) {
+      {
+        Func target = (Func) (enclosingFunction());
+        java.util.Set<ASTNode> contributors = _map.get(target);
+        if (contributors == null) {
+          contributors = new java.util.LinkedHashSet<ASTNode>();
+          _map.put((ASTNode) target, contributors);
+        }
+        contributors.add(this);
+      }
+    }
+    super.collect_contributors_Func_functionCalls(_root, _map);
+  }
+  /** @apilevel internal */
   protected void contributeTo_Program_errors(Set<ErrorMessage> collection) {
     super.contributeTo_Program_errors(collection);
     if (areArgsIncorrect()) {
       collection.add(error("Wrong number of arguments. Found '" + getArgs().getExprs().getNumChild() + "' arguments but expected number was '" + ((Func)getID().decl().getParent()).getArgs().getIdDeclList().getNumChild() + "'"));
+    }
+  }
+  /** @apilevel internal */
+  protected void contributeTo_Func_functionCalls(HashSet<Func> collection) {
+    super.contributeTo_Func_functionCalls(collection);
+    if (true) {
+      collection.add(enclosingFunction());
     }
   }
 }

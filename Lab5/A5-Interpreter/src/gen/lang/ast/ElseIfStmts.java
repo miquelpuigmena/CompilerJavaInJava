@@ -7,11 +7,12 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Scanner;
 /**
  * @ast node
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:26
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/lang.ast:27
  * @astdecl ElseIfStmts : ASTNode ::= ElseIfStmt*;
  * @production ElseIfStmts : {@link ASTNode} ::= <span class="component">{@link ElseIfStmt}*</span>;
 

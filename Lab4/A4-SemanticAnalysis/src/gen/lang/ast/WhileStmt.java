@@ -10,8 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:23
- * @astdecl WhileStmt : Stmt ::= Condition:CompExpr Then:Block;
- * @production WhileStmt : {@link Stmt} ::= <span class="component">Condition:{@link CompExpr}</span> <span class="component">Then:{@link Block}</span>;
+ * @astdecl WhileStmt : Stmt ::= Condition:Expr Then:Block;
+ * @production WhileStmt : {@link Stmt} ::= <span class="component">Condition:{@link Expr}</span> <span class="component">Then:{@link Block}</span>;
 
  */
 public class WhileStmt extends Stmt implements Cloneable {
@@ -47,10 +47,10 @@ public class WhileStmt extends Stmt implements Cloneable {
    */
   @ASTNodeAnnotation.Constructor(
     name = {"Condition", "Then"},
-    type = {"CompExpr", "Block"},
+    type = {"Expr", "Block"},
     kind = {"Child", "Child"}
   )
-  public WhileStmt(CompExpr p0, Block p1) {
+  public WhileStmt(Expr p0, Block p1) {
     setChild(p0, 0);
     setChild(p1, 1);
   }
@@ -158,7 +158,7 @@ public class WhileStmt extends Stmt implements Cloneable {
    * @param node The new node to replace the Condition child.
    * @apilevel high-level
    */
-  public void setCondition(CompExpr node) {
+  public void setCondition(Expr node) {
     setChild(node, 0);
   }
   /**
@@ -167,8 +167,8 @@ public class WhileStmt extends Stmt implements Cloneable {
    * @apilevel high-level
    */
   @ASTNodeAnnotation.Child(name="Condition")
-  public CompExpr getCondition() {
-    return (CompExpr) getChild(0);
+  public Expr getCondition() {
+    return (Expr) getChild(0);
   }
   /**
    * Retrieves the Condition child.
@@ -176,8 +176,8 @@ public class WhileStmt extends Stmt implements Cloneable {
    * @return The current node used as the Condition child.
    * @apilevel low-level
    */
-  public CompExpr getConditionNoTransform() {
-    return (CompExpr) getChildNoTransform(0);
+  public Expr getConditionNoTransform() {
+    return (Expr) getChildNoTransform(0);
   }
   /**
    * Replaces the Then child.

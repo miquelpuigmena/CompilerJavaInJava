@@ -105,19 +105,19 @@ elseif_stmts =
     ;
 
 elseif_stmt =
-    ELSEIF LEFTPARENTHESIS condition.a RIGHTPARENTHESIS
+    ELSEIF LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
         LEFTBRACKET block.b RIGHTBRACKET
             {: return new ElseIfStmt(a, b); :}
     ;
 
 if_stmt =
-    IF LEFTPARENTHESIS condition.a RIGHTPARENTHESIS
+    IF LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
         LEFTBRACKET block.b RIGHTBRACKET elseif_stmts.c else_stmt.d
             {: return new IfStmt(a, b, new ElseIfStmts(c), d); :}
     ;
 
 while_stmt =
-    WHILE LEFTPARENTHESIS condition.a RIGHTPARENTHESIS
+    WHILE LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
         LEFTBRACKET block.b RIGHTBRACKET
             {: return new WhileStmt(a, b); :}
     ;

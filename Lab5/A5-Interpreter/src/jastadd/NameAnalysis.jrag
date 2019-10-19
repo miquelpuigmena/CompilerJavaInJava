@@ -2,14 +2,17 @@ aspect NameAnalysis {
 
 	eq Program.getChild().lookup(String name) = UnknownDecl();
 	eq Program.getFunc(int index).lookup(String name) {
-        for(Func func : getFuncs().addAll(PreDefFuncs())){
+        for(Func func : getFuncs()){
+            if(func.getDecl().getID().equals(name)) return func.getDecl();
+        }
+        for(Func func: PreDefFuncs()) {
             if(func.getDecl().getID().equals(name)) return func.getDecl();
         }
         return UnknownDecl();
     }
 
+
 	inh IdDecl IdUse.lookup(String name);
-	//inh String IdDecl.uniqueName();
 	syn String IdDecl.uniqueName() {
 	    ASTNode parent = getParent();
 	    String id = getID();

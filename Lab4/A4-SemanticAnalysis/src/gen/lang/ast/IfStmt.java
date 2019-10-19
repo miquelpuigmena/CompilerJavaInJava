@@ -10,8 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @ast node
  * @declaredat /home/miquel/Documents/LTH/compilers/Lab4/A4-SemanticAnalysis/src/jastadd/lang.ast:24
- * @astdecl IfStmt : Stmt ::= Condition:CompExpr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
- * @production IfStmt : {@link Stmt} ::= <span class="component">Condition:{@link CompExpr}</span> <span class="component">Then:{@link Block}</span> <span class="component">Elif:{@link ElseIfStmts}</span> <span class="component">[Else:{@link ElseStmt}]</span>;
+ * @astdecl IfStmt : Stmt ::= Condition:Expr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
+ * @production IfStmt : {@link Stmt} ::= <span class="component">Condition:{@link Expr}</span> <span class="component">Then:{@link Block}</span> <span class="component">Elif:{@link ElseIfStmts}</span> <span class="component">[Else:{@link ElseStmt}]</span>;
 
  */
 public class IfStmt extends Stmt implements Cloneable {
@@ -61,10 +61,10 @@ public class IfStmt extends Stmt implements Cloneable {
    */
   @ASTNodeAnnotation.Constructor(
     name = {"Condition", "Then", "Elif", "Else"},
-    type = {"CompExpr", "Block", "ElseIfStmts", "Opt<ElseStmt>"},
+    type = {"Expr", "Block", "ElseIfStmts", "Opt<ElseStmt>"},
     kind = {"Child", "Child", "Child", "Opt"}
   )
-  public IfStmt(CompExpr p0, Block p1, ElseIfStmts p2, Opt<ElseStmt> p3) {
+  public IfStmt(Expr p0, Block p1, ElseIfStmts p2, Opt<ElseStmt> p3) {
     setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
@@ -174,7 +174,7 @@ public class IfStmt extends Stmt implements Cloneable {
    * @param node The new node to replace the Condition child.
    * @apilevel high-level
    */
-  public void setCondition(CompExpr node) {
+  public void setCondition(Expr node) {
     setChild(node, 0);
   }
   /**
@@ -183,8 +183,8 @@ public class IfStmt extends Stmt implements Cloneable {
    * @apilevel high-level
    */
   @ASTNodeAnnotation.Child(name="Condition")
-  public CompExpr getCondition() {
-    return (CompExpr) getChild(0);
+  public Expr getCondition() {
+    return (Expr) getChild(0);
   }
   /**
    * Retrieves the Condition child.
@@ -192,8 +192,8 @@ public class IfStmt extends Stmt implements Cloneable {
    * @return The current node used as the Condition child.
    * @apilevel low-level
    */
-  public CompExpr getConditionNoTransform() {
-    return (CompExpr) getChildNoTransform(0);
+  public Expr getConditionNoTransform() {
+    return (Expr) getChildNoTransform(0);
   }
   /**
    * Replaces the Then child.

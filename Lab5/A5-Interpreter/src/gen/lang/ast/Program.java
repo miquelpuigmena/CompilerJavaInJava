@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Scanner;
 /**
@@ -29,7 +30,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/Interpreter.jrag:17
    */
   public void eval() {
-        Func f_main = isFuncInList(getFuncs(), "main");
+        Func f_main = getFuncFromList(getFuncs(), "main");
         f_main.eval(new ActivationRecord(new HashMap<String, Integer>()));
     }
   /**
@@ -75,10 +76,11 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
     UnknownDecl_reset();
     IntType_reset();
     UnknownType_reset();
+    UnknownFunc_reset();
     BoolType_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:36
+   * @declaredat ASTNode:37
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
@@ -87,16 +89,17 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
     
     Program_errors_value = null;
     contributorMap_Program_errors = null;
+    contributorMap_Func_functionCalls = null;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:45
+   * @declaredat ASTNode:47
    */
   public Program clone() throws CloneNotSupportedException {
     Program node = (Program) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:50
+   * @declaredat ASTNode:52
    */
   public Program copy() {
     try {
@@ -116,7 +119,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:69
+   * @declaredat ASTNode:71
    */
   @Deprecated
   public Program fullCopy() {
@@ -127,7 +130,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:79
+   * @declaredat ASTNode:81
    */
   public Program treeCopyNoTransform() {
     Program tree = (Program) copy();
@@ -148,7 +151,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:99
+   * @declaredat ASTNode:101
    */
   public Program treeCopy() {
     Program tree = (Program) copy();
@@ -164,7 +167,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:113
+   * @declaredat ASTNode:115
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node);    
@@ -291,6 +294,21 @@ protected java.util.Map<ASTNode, java.util.Set<ASTNode>> contributorMap_Program_
     if (contributorMap_Program_errors == null) {
       contributorMap_Program_errors = new java.util.IdentityHashMap<ASTNode, java.util.Set<ASTNode>>();
       collect_contributors_Program_errors(this, contributorMap_Program_errors);
+    }
+  }
+
+  /**
+   * @aspect <NoAspect>
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:5
+   */
+  /** @apilevel internal */
+protected java.util.Map<ASTNode, java.util.Set<ASTNode>> contributorMap_Func_functionCalls = null;
+
+  /** @apilevel internal */
+  protected void survey_Func_functionCalls() {
+    if (contributorMap_Func_functionCalls == null) {
+      contributorMap_Func_functionCalls = new java.util.IdentityHashMap<ASTNode, java.util.Set<ASTNode>>();
+      collect_contributors_Func_functionCalls(this, contributorMap_Func_functionCalls);
     }
   }
 
@@ -458,6 +476,45 @@ protected boolean UnknownType_visited = false;
     return UnknownType_value;
   }
 /** @apilevel internal */
+protected boolean UnknownFunc_visited = false;
+  /** @apilevel internal */
+  private void UnknownFunc_reset() {
+    UnknownFunc_computed = false;
+    
+    UnknownFunc_value = null;
+    UnknownFunc_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean UnknownFunc_computed = false;
+
+  /** @apilevel internal */
+  protected UnknownFunc UnknownFunc_value;
+
+  /**
+   * @attribute syn
+   * @aspect UnknownFunc
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/UnknownFunc.jrag:2
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN, isNTA=true)
+  @ASTNodeAnnotation.Source(aspect="UnknownFunc", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/UnknownFunc.jrag:2")
+  public UnknownFunc UnknownFunc() {
+    ASTState state = state();
+    if (UnknownFunc_computed) {
+      return UnknownFunc_value;
+    }
+    if (UnknownFunc_visited) {
+      throw new RuntimeException("Circular definition of attribute Program.UnknownFunc().");
+    }
+    UnknownFunc_visited = true;
+    state().enterLazyAttribute();
+    UnknownFunc_value = new UnknownFunc();
+    UnknownFunc_value.setParent(this);
+    UnknownFunc_computed = true;
+    state().leaveLazyAttribute();
+    UnknownFunc_visited = false;
+    return UnknownFunc_value;
+  }
+/** @apilevel internal */
 protected boolean BoolType_visited = false;
   /** @apilevel internal */
   private void BoolType_reset() {
@@ -545,7 +602,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:28
    * @apilevel internal
    */
   public IdDecl Define_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
@@ -553,7 +610,10 @@ protected boolean BoolType_visited = false;
       // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:4
       int index = _callerNode.getIndexOfChild(_childNode);
       {
-              for(Func func : getFuncs().addAll(PreDefFuncs())){
+              for(Func func : getFuncs()){
+                  if(func.getDecl().getID().equals(name)) return func.getDecl();
+              }
+              for(Func func: PreDefFuncs()) {
                   if(func.getDecl().getID().equals(name)) return func.getDecl();
               }
               return UnknownDecl();
@@ -565,7 +625,7 @@ protected boolean BoolType_visited = false;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:25
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:28
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */
@@ -573,7 +633,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:99
    * @apilevel internal
    */
   public boolean Define_inExprOf(ASTNode _callerNode, ASTNode _childNode, IdDecl decl) {
@@ -581,7 +641,7 @@ protected boolean BoolType_visited = false;
     return false;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:96
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/NameAnalysis.jrag:99
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */
@@ -602,6 +662,38 @@ protected boolean BoolType_visited = false;
    * @return {@code true} if this node has an equation for the inherited attribute UnknownType
    */
   protected boolean canDefine_UnknownType(ASTNode _callerNode, ASTNode _childNode) {
+    return true;
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/UnknownFunc.jrag:4
+   * @apilevel internal
+   */
+  public UnknownFunc Define_UnknownFunc(ASTNode _callerNode, ASTNode _childNode) {
+    int childIndex = this.getIndexOfChild(_callerNode);
+    return UnknownFunc();
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/UnknownFunc.jrag:4
+   * @apilevel internal
+   * @return {@code true} if this node has an equation for the inherited attribute UnknownFunc
+   */
+  protected boolean canDefine_UnknownFunc(ASTNode _callerNode, ASTNode _childNode) {
+    return true;
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @apilevel internal
+   */
+  public Func Define_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
+    int childIndex = this.getIndexOfChild(_callerNode);
+    return UnknownFunc();
+  }
+  /**
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @apilevel internal
+   * @return {@code true} if this node has an equation for the inherited attribute enclosingFunction
+   */
+  protected boolean canDefine_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
     return true;
   }
   /**

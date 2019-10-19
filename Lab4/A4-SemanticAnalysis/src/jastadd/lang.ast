@@ -20,9 +20,9 @@ FuncCallArgs                        ::= IdUse*;
 AssigmtStmt         : Stmt          ::= Left:IdDecl [Right:Expr];
 AssigmtUse          : Stmt          ::= Left:IdUse  Right:Expr;
 ReturnStmt          : Stmt          ::= Return:Expr;
-WhileStmt           : Stmt          ::= Condition:CompExpr Then:Block;
-IfStmt              : Stmt          ::= Condition:CompExpr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
-ElseIfStmt          : Stmt          ::= Condition:CompExpr Then:Block;
+WhileStmt           : Stmt          ::= Condition:Expr Then:Block;
+IfStmt              : Stmt          ::= Condition:Expr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
+ElseIfStmt          : Stmt          ::= Condition:Expr Then:Block;
 ElseIfStmts                         ::= ElseIfStmt*;
 ElseStmt            : Stmt          ::= Block:Block;
 

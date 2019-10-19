@@ -1,0 +1,20 @@
+import java.util.HashSet;
+
+aspect FunctionCalls {
+
+	coll HashSet<Func> Func.functionCalls() [new HashSet<Func>()] with add root Program;
+
+
+	inh Func ASTNode.enclosingFunction();
+	eq Program.getChild().enclosingFunction() = UnknownFunc();
+	eq Func.getChild().enclosingFunction() = this;
+	eq Stmt.getChild().enclosingFunction() = enclosingFunction();
+}
+
+aspect FunctionCallsContributions {
+    FuncCall
+        contributes enclosingFunction()
+        when true
+        to Func.functionCalls()
+        for enclosingFunction();
+}
