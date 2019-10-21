@@ -372,7 +372,7 @@ protected java.util.Set lookup_String_visited;
   }
   /** @apilevel internal */
   protected void collect_contributors_Func_functionCalls(Program _root, java.util.Map<ASTNode, java.util.Set<ASTNode>> _map) {
-    // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:15
+    // @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:22
     if (true) {
       {
         Func target = (Func) (enclosingFunction());

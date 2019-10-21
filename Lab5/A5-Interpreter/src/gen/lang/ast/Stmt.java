@@ -165,7 +165,7 @@ protected java.util.Set lookup_String_visited;
   protected java.util.Map lookup_String_values;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    * @apilevel internal
    */
   public Func Define_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
@@ -173,7 +173,7 @@ protected java.util.Set lookup_String_visited;
     return enclosingFunction();
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute enclosingFunction
    */

@@ -753,10 +753,10 @@ protected boolean UnknownFunc_visited = false;
   /**
    * @attribute inh
    * @aspect FunctionCalls
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="FunctionCalls", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8")
+  @ASTNodeAnnotation.Source(aspect="FunctionCalls", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7")
   public Func enclosingFunction() {
     ASTState state = state();
     if (enclosingFunction_computed) {
@@ -979,7 +979,7 @@ protected boolean BoolType_visited = false;
   }
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:10
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:9
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute enclosingFunction
    */

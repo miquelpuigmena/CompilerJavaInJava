@@ -681,7 +681,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    * @apilevel internal
    */
   public Func Define_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
@@ -689,7 +689,7 @@ protected boolean BoolType_visited = false;
     return UnknownFunc();
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute enclosingFunction
    */

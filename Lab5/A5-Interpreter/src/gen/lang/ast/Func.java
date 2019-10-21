@@ -95,10 +95,11 @@ public class Func extends Stmt implements Cloneable {
     super.flushAttrCache();
     localLookup_String_reset();
     isUnknown_reset();
+    isReaching_Func_reset();
     lookup_String_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:35
+   * @declaredat ASTNode:36
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
@@ -108,14 +109,14 @@ public class Func extends Stmt implements Cloneable {
     Func_functionCalls_value = null;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:43
+   * @declaredat ASTNode:44
    */
   public Func clone() throws CloneNotSupportedException {
     Func node = (Func) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:48
+   * @declaredat ASTNode:49
    */
   public Func copy() {
     try {
@@ -135,7 +136,7 @@ public class Func extends Stmt implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:67
+   * @declaredat ASTNode:68
    */
   @Deprecated
   public Func fullCopy() {
@@ -146,7 +147,7 @@ public class Func extends Stmt implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:77
+   * @declaredat ASTNode:78
    */
   public Func treeCopyNoTransform() {
     Func tree = (Func) copy();
@@ -167,7 +168,7 @@ public class Func extends Stmt implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:97
+   * @declaredat ASTNode:98
    */
   public Func treeCopy() {
     Func tree = (Func) copy();
@@ -183,7 +184,7 @@ public class Func extends Stmt implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:111
+   * @declaredat ASTNode:112
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node);    
@@ -338,6 +339,50 @@ protected boolean isUnknown_visited = false;
     isUnknown_visited = false;
     return isUnknown_value;
   }
+/** @apilevel internal */
+protected java.util.Set isReaching_Func_visited;
+  /** @apilevel internal */
+  private void isReaching_Func_reset() {
+    isReaching_Func_values = null;
+    isReaching_Func_visited = null;
+  }
+  /** @apilevel internal */
+  protected java.util.Map isReaching_Func_values;
+
+  /**
+   * @attribute syn
+   * @aspect FunctionCalls
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:12
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="FunctionCalls", declaredAt="/home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:12")
+  public Boolean isReaching(Func funcToReach) {
+    Object _parameters = funcToReach;
+    if (isReaching_Func_visited == null) isReaching_Func_visited = new java.util.HashSet(4);
+    if (isReaching_Func_values == null) isReaching_Func_values = new java.util.HashMap(4);
+    ASTState state = state();
+    if (isReaching_Func_values.containsKey(_parameters)) {
+      return (Boolean) isReaching_Func_values.get(_parameters);
+    }
+    if (isReaching_Func_visited.contains(_parameters)) {
+      throw new RuntimeException("Circular definition of attribute Func.isReaching(Func).");
+    }
+    isReaching_Func_visited.add(_parameters);
+    state().enterLazyAttribute();
+    Boolean isReaching_Func_value = isReaching_compute(funcToReach);
+    isReaching_Func_values.put(_parameters, isReaching_Func_value);
+    state().leaveLazyAttribute();
+    isReaching_Func_visited.remove(_parameters);
+    return isReaching_Func_value;
+  }
+  /** @apilevel internal */
+  private Boolean isReaching_compute(Func funcToReach) {
+          if(functionToReach == this || functionsCalls().contains(funcToReach)) return true;
+          for(Func f : this.functionsCall()) {
+              if(f.isReaching(funcToReach)) return true;
+          }
+          return false;
+      }
   /**
    * @attribute inh
    * @aspect NameAnalysis
@@ -403,7 +448,7 @@ protected java.util.Set lookup_String_visited;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    * @apilevel internal
    */
   public Func Define_enclosingFunction(ASTNode _callerNode, ASTNode _childNode) {
@@ -411,7 +456,7 @@ protected java.util.Set lookup_String_visited;
     return this;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:8
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab5/A5-Interpreter/src/jastadd/FuncCall.jrag:7
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute enclosingFunction
    */
