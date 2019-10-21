@@ -1,4 +1,3 @@
-11
 .global _start
 .data
 buf: .skip 1024
@@ -8,7 +7,7 @@ _start:
         pushq %rbp # From Func
         movq %rsp, %rbp # From Func
         subq $8, %rsp # From Func
-        movq $10, %rax
+        movq $4, %rax
         pushq %rax # From FuncCall
         pushq %rbp # From Func
         movq %rsp, %rbp # From Func
@@ -21,20 +20,20 @@ _start:
         movq %rax, %rbx
         popq %rax
         cmpq %rbx, %rax
-        jne _others0.5344290552400405
+        jne _otherssum_lang.ast.Func_lang.ast.List
         movq $0, %rax
-        jmp _endIf0.5344290552400405
-        _others0.5344290552400405:
-        jmp _endIf0.5344290552400405
-        _elseIf0.5344290552400405:
-        jmp _endIf0.5344290552400405
-        _else0.5344290552400405:
-        _endIf0.5344290552400405:
+        jmp _endIfsum_lang.ast.Func_lang.ast.List
+        _otherssum_lang.ast.Func_lang.ast.List:
+        jmp _endIfsum_lang.ast.Func_lang.ast.List
+        _elseIfsum_lang.ast.Func_lang.ast.List:
+        jmp _endIfsum_lang.ast.Func_lang.ast.List
+        _elsesum_lang.ast.Func_lang.ast.List:
+        _endIfsum_lang.ast.Func_lang.ast.List:
         movq %rbp, %rsp
         popq %rbp
         pushq %rax # From FuncCall
         call print
-        movq $0, %rax
+        movq $6, %rax
         movq %rbp, %rsp
         popq %rbp
         movq $0, %rdi

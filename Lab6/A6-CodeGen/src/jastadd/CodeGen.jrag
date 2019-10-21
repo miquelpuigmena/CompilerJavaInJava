@@ -24,6 +24,7 @@ aspect CodeGen {
     writePrint(out);
 
   }
+
   public void Func.genEval(PrintStream out) {
 
     if(getDecl().getID().equals("print")) {
@@ -40,10 +41,11 @@ aspect CodeGen {
             getBlock().genEval(out);
         } catch (Exception e) {
 
+        } finally {
+            // De-Allocate local variables
+            out.println("        movq %rbp, %rsp");
+            out.println("        popq %rbp");
         }
-        // De-Allocate local variables
-        out.println("        movq %rbp, %rsp");
-        out.println("        popq %rbp");
     }
 
   }
@@ -54,68 +56,69 @@ aspect CodeGen {
       if(ReturnStmt.class.isInstance(s)) throw new Exception("Empty :)");
     }
   }
+
   public void IfStmt.genEval(PrintStream out) throws Exception{
-        String unique = String.valueOf(Math.random());
-        getCondition().genEval(out);
-        out.append(" _others"+unique);
-        out.println();
-        try {
-            getThen().genEval(out);
-        } catch (Exception e) {
-            throw new Exception();
-        } finally {
+      Func enc_f = enclosingFunction();
+      String unique = enc_f.getDecl().uniqueName();
+      getCondition().genEval(out);
+      out.append(" _others"+unique);
+      out.println();
+      try{
+        getThen().genEval(out);
+      } catch (Exception e) {
+        throw e;
+      } finally {
+          out.println("        jmp _endIf"+unique);
+
+          out.println("        _others"+unique+":");
+          if(getElif().getNumElseIfStmt() > 0){      // if there's elseif
+            out.println("        jmp _elseIf"+unique);
+          }else if (hasElse()){                      // if there's no elseif but there is else
+            out.println("        jmp _else"+unique);
+          }else{                                     // no elseif AND no else
             out.println("        jmp _endIf"+unique);
+          }
 
-            out.println("        _others"+unique+":");
-            if(getElif().getNumElseIfStmt() > 0){      // if there's elseif
-              out.println("        jmp _elseIf"+unique);
-            }else if (hasElse()){                      // if there's no elseif but there is else
-              out.println("        jmp _else"+unique);
-            }else{                                     // no elseif AND no else
-              out.println("        jmp _endIf"+unique);
-            }
+          out.println("        _elseIf"+unique+":");
+          if(getElif().getNumElseIfStmt() > 0){
+            getElif().genEval(out);
+          }
+          out.println("        jmp _endIf"+unique);
 
-            out.println("        _elseIf"+unique+":");
-            if(getElif().getNumElseIfStmt() > 0){
-                int i = 0;
-                Boolean returned = false;
-                for(i = 0; i < getElif().getNumElseIfStmt(); i++){
-                  getElif().getElseIfStmt(i).getCondition().genEval(out);
-                  out.append(" _skipThen"+unique+i);
-                  out.println();
-                  try {
-                      getElif().getElseIfStmt(i).getThen().genEval(out);
-                  } catch (Exception e) {
-                      returned = true;
-                      break;
-                  } finally {
-                      out.println("        jmp _condSucc"+unique);
-                      out.println("        _skipThen"+unique+i+":");
-                  }
-                }
+          out.println("        _else"+unique+":");
+          if(hasElse()){
+            getElse().genEval(out);
+          }
 
-                out.println("        jmp _else"+unique);
-                out.println("        _condSucc"+unique+":");
-                if(returned) throw new Exception();
-            }
-            out.println("        jmp _endIf"+unique);
+          out.println("        _endIf"+unique+":");
+      }
+  }
 
-            out.println("        _else"+unique+":");
-            if(hasElse()){
-              getElse().genEval(out);
-            }
+  public void ElseIfStmts.genEval(PrintStream out) throws Exception{
+      Func enc_f = enclosingFunction();
+      String unique = enc_f.getDecl().uniqueName();
+    int i = 0;
 
-            out.println("        _endIf"+unique+":");
-        }
+    for(i = 0; i < getNumElseIfStmt(); i++){
+      getElseIfStmt(i).getCondition().genEval(out);
+      out.append(" _skipThen"+unique+i);
+      out.println();
+
+      getElseIfStmt(i).getThen().genEval(out);
+      out.println("        jmp _condSucc"+unique);
+
+      out.println("        _skipThen"+unique+i+":");
     }
 
-    public void ElseIfStmts.genEval(PrintStream out) throws Exception {
-    }
-    public void ElseIfStmt.genEval(PrintStream out){
-    }
-    public void ElseStmt.genEval(PrintStream out) throws Exception{
-      getBlock().genEval(out);
-    }
+    out.println("        jmp _else"+unique);
+    out.println("        _condSucc"+unique+":");
+  }
+  public void ElseIfStmt.genEval(PrintStream out){
+  }
+  public void ElseStmt.genEval(PrintStream out) throws Exception{
+    getBlock().genEval(out);
+  }
+
   public void AssigmtStmt.genEval(PrintStream out) {
     //out.println("IN AssigmtStmt call");
     if(hasRight()) getRight().genEval(out);
@@ -129,7 +132,6 @@ aspect CodeGen {
   }
   public void ReturnStmt.genEval(PrintStream out) {
     //out.println("IN ReturnStmt call");
-    System.out.println(getReturn());
     getReturn().genEval(out);
   }
   public void WhileStmt.genEval(PrintStream out)  throws Exception {
@@ -183,10 +185,6 @@ aspect CodeGen {
 /* -------- Math/Expr junk --------- */
 
   abstract public void Expr.genEval(PrintStream out);
-
-  public void Numeral.genEval(PrintStream out) {
-    out.println("        movq $" + getNUMERAL() + ", %rax");
-  }
   public void Add.genEval(PrintStream out) {
     out.println("# In add!");
     getLeft().genEval(out);
@@ -332,7 +330,9 @@ aspect CodeGen {
     out.println("        ret");
     out.println("");
   }
-
+  public void Numeral.genEval(PrintStream out) {
+    out.println("        movq $" + getNUMERAL() + ", %rax");
+  }
   /**
    * Address of local variable variable in the current stack frame.
    */
