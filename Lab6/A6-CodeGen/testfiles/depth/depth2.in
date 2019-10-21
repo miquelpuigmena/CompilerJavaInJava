@@ -1,0 +1,8 @@
+int main(){
+	// depth = 1
+	int i = 50;
+	if(i > 25){
+		//depth = 2
+		print(i);
+	}
+}

@@ -1,0 +1,29 @@
+import java.util.HashSet;
+
+aspect FunctionCalls {
+
+	coll HashSet<Func> Func.functionCalls() [new HashSet<Func>()] with add root Program;
+
+	inh Func ASTNode.enclosingFunction();
+	eq Program.getChild().enclosingFunction() = UnknownFunc();
+	eq Func.getChild().enclosingFunction() = this;
+	eq Stmt.getChild().enclosingFunction() = enclosingFunction();
+
+    /*
+    inh Boolean Func.isReaching(Func f);
+    eq Func.isReaching(Func funcToReach) {
+        if(functionToReach == this || functionsCalls().contains(funcToReach)) return true;
+        for(Func f : this.functionsCall()) {
+            if(f.isReaching(funcToReach)) return true;
+        }
+        return false;
+    }*/
+}
+
+aspect FunctionCallsContributions {
+    FuncCall
+        contributes enclosingFunction()
+        when true
+        to Func.functionCalls()
+        for enclosingFunction();
+}

@@ -1,0 +1,47 @@
+Program ::= Func*;
+
+abstract Stmt;
+abstract Expr       : Stmt;
+abstract Atomic     : Expr;
+abstract Call       : Expr;
+abstract Type;
+
+IntType             : Type;
+BoolType            : Type;
+UnknownType         : Type;
+
+Block                               ::= Stmt*;
+
+Func                : Stmt          ::= Decl:IdDecl Args:FuncArgs Block:Block;
+FuncArgs                            ::= IdDecl*;
+FuncCall            : Call          ::= ID:IdUse Args:FuncCallArgs;
+FuncCallArgs                        ::= Expr*;
+UnknownFunc         : Func;
+
+AssigmtStmt         : Stmt          ::= Left:IdDecl [Right:Expr];
+AssigmtUse          : Stmt          ::= Left:IdUse  Right:Expr;
+ReturnStmt          : Stmt          ::= Return:Expr;
+WhileStmt           : Stmt          ::= Condition:Expr Then:Block;
+IfStmt              : Stmt          ::= Condition:Expr Then:Block Elif:ElseIfStmts [Else:ElseStmt];
+ElseIfStmt          : Stmt          ::= Condition:Expr Then:Block;
+ElseIfStmts                         ::= ElseIfStmt*;
+ElseStmt            : Stmt          ::= Block:Block;
+
+IdUse               : Atomic        ::= <ID:String>;
+Numeral             : Atomic        ::= <NUMERAL:String>;
+IdDecl              : Atomic        ::= <ID:String>;
+UnknownDecl         : IdDecl;
+
+abstract BinaryExpr : Expr          ::= Left:Expr Right:Expr;
+abstract CompExpr   : Expr          ::= Left:Expr Right:Expr;
+Add : BinaryExpr;
+Sub : BinaryExpr;
+Mul : BinaryExpr;
+Div : BinaryExpr;
+Mod : BinaryExpr;
+GT  : CompExpr;
+LT  : CompExpr;
+GE  : CompExpr;
+LE  : CompExpr;
+EQ  : CompExpr;
+NE  : CompExpr;

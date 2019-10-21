@@ -1,0 +1,16 @@
+Program
+  List
+    Func
+      IdDecl ID="a"
+      FuncArgs
+        List
+          IdDecl ID="x"
+          IdDecl ID="i"
+      Block
+        List
+    Func
+      IdDecl ID="b"
+      FuncArgs
+        List
+      Block
+        List

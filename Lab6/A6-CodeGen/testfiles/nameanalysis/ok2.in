@@ -1,0 +1,10 @@
+int b(int a) {
+    return 5;
+}
+int bb(int aa) {
+    return b(aa);
+}
+int main() {
+    bb(5);
+    return 0;
+}

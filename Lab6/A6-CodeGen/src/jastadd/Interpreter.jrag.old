@@ -1,0 +1,197 @@
+import java.util.HashMap;
+
+aspect Interpreter {
+    public static int ASTNode.DEFAULT_INT = 0;
+    public static Func ASTNode.isFuncInList(List<Func> funcs, String name) {
+        for(Func f : funcs) {
+            if(f.getDecl().getID().equals(name)) {
+                return f;
+            }
+        }
+        throw new RuntimeException("No" + name + "function");
+    }
+
+    public void Program.eval() {
+        Func f_main = isFuncInList(getFuncs(), "main");
+        f_main.eval(new ActivationRecord(new HashMap<String, Integer>()));
+    }
+
+    abstract public int Stmt.eval(ActivationRecord actrec) throws Exception;
+    abstract public int Expr.eval(ActivationRecord actrec);
+
+    public int Func.eval(ActivationRecord actrec) {
+        System.out.println("In Func");
+        try{
+            getBlock().eval(actrec);
+        }catch(Exception e){
+            return Integer.valueOf(e.getMessage());
+        }
+//        if(getDecl().getID().equals("print")){
+//            System.out.println("Print function reached...args:" + actrec.get("string"));
+//        } else if (getDecl().getID().equals("read")){
+//            // do nothing
+//            
+//        } else {
+//            throw new RuntimeException("no value returned");
+//        }
+    return 0;
+    }
+
+    public int Block.eval(ActivationRecord actrec) throws Exception{
+        System.out.println("In Block");
+        for(Stmt s : getStmts()){
+            s.eval(actrec);
+        }
+        return 1;
+    }
+    public int IfStmt.eval(ActivationRecord actrec) throws Exception{
+        System.out.println("In IfStmt");
+        int j = 0;
+        if(getCondition().eval(actrec) == 1){
+            getThen().eval(actrec);
+        } else{
+            for(ElseIfStmt e : getElif().getElseIfStmts()){
+                j = e.eval(actrec);
+                if(j == 1){
+                    break;
+                }
+            }
+            if(hasElse() && j == 0){
+                getElse().eval(actrec);
+            }
+        }
+        return 1;
+    }
+    public int ElseIfStmt.eval(ActivationRecord actrec) throws Exception{
+        System.out.println("In ElseIf");
+        if(getCondition().eval(actrec) == 1){
+            getThen().eval(actrec);
+        } else{
+            return 0;
+        }
+        return 1;
+    }
+
+    public int ElseStmt.eval(ActivationRecord actrec) throws Exception{
+        System.out.println("In ElseStmt");
+        getBlock().eval(actrec);
+        return 1;
+    }
+    public int WhileStmt.eval(ActivationRecord actrec) throws Exception{
+        System.out.println("In WhileStmt");
+        while(getCondition().eval(actrec)==1){
+            getThen().eval(actrec);
+        }
+        return 1;
+    }
+    public int ReturnStmt.eval(ActivationRecord actrec) throws Exception{
+        System.out.println("In ReturnStmt");
+        throw new Exception(String.valueOf(getReturn().eval(actrec)));
+    }
+
+    public int AssigmtUse.eval(ActivationRecord actrec) {
+        System.out.println("In AssmtUse");
+        actrec.store(getLeft().getID(), getRight().eval(actrec));
+        return 1;
+    }
+
+    public int AssigmtStmt.eval(ActivationRecord actrec) {
+        System.out.println("In assigmt stmt");
+        if(hasRight()) {
+            actrec.store(getLeft().getID(), getRight().eval(actrec));
+        }else{ //doesnt have a right 
+            getLeft().eval(actrec);
+        }
+        return 1;
+    }
+
+    public int FuncCall.eval(ActivationRecord actrec) {
+        System.out.println("in FuncCall");
+        ActivationRecord innerActrec = new ActivationRecord(new HashMap<String, Integer>());
+        IdDecl decl = lookup(getID().getID());
+        Func func = (Func) decl.getParent();
+        int i = 0;
+        for(Expr e : getArgs().getExprs()) {
+            innerActrec.store(func.getArgs().getIdDecl(i).getID(), e.eval(actrec));
+            i++;
+        }
+        return func.eval(innerActrec);
+    }
+
+    public int IdUse.eval(ActivationRecord actrec) {
+        System.out.println("in IdUse");
+        System.out.println(actrec.get(decl().getID()));
+        return actrec.get(decl().getID());
+    }
+
+    public int IdDecl.eval(ActivationRecord actrec) {
+        System.out.println("in IdDecl");
+        actrec.store(getID(), DEFAULT_INT);
+        return 1;
+    }
+
+    /* --- Types: int --- */
+	public int Numeral.eval(ActivationRecord actrec) {
+	    System.out.println("in numeral");
+		return Integer.parseInt(getNUMERAL());
+	}
+
+    /* --- Math --- */
+    /* --- 1 => true --- */
+    /* --- 0 => false --- */
+	public int Add.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) + getRight().eval(actrec);
+	}
+	public int Sub.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) - getRight().eval(actrec);
+	}
+	public int Mul.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) * getRight().eval(actrec);
+	}
+	public int Div.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) / getRight().eval(actrec);
+	}
+	public int Mod.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) % getRight().eval(actrec);
+	}
+	public int GT.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) >  getRight().eval(actrec) ? 1 : 0;
+	}
+	public int LT.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) <  getRight().eval(actrec) ? 1 : 0;
+	}
+	public int GE.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) >= getRight().eval(actrec) ? 1 : 0;
+	}
+	public int LE.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) <= getRight().eval(actrec) ? 1 : 0;
+	}
+	public int EQ.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) == getRight().eval(actrec) ? 1 : 0;
+	}
+	public int NE.eval(ActivationRecord actrec) {
+		return getLeft().eval(actrec) != getRight().eval(actrec) ? 1 : 0;
+	}
+
+	public class ActivationRecord {
+	    HashMap<String, Integer> map;
+
+        public ActivationRecord(HashMap map) {
+            this.map = new HashMap<>();
+        }
+
+        public void store(String name, Integer value) {
+            System.out.println("Storing name: "+name+", value: "+String.valueOf(value));
+            this.map.put(name, value);
+        }
+
+        public int get(String name) {
+            System.out.println("Getting name: "+name);
+            System.out.println(this.map.keySet());
+            return this.map.get(name);
+        }
+        public ActivationRecord copy(){
+            return new ActivationRecord(new HashMap<String, Integer>(this.map));
+        }
+    }
+}

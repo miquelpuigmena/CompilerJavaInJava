@@ -1,0 +1,105 @@
+aspect CodeGen {
+
+  public void Program.genCode(PrintStream out) {
+    out.println(".global _start");
+    out.println(".data");
+    out.println("buf: .skip 1024");
+    out.println();
+    out.println(".text");
+    out.println("_start:");
+
+    // Allocate space for local variables (bindings):
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+
+    Func f_main = getFuncFromList(getFuncs(), "main");
+    f_main.genEval(out);// stores result in RAX
+
+  }
+  public void Func.genEval(PrintStream out) {
+    for (Stmt s : getBlock().getStmts()) {
+      s.genEval(out);
+    }
+  }
+  public void IfStmt.genEval(PrintStream out) {
+    out.println("IN IfStmt call");
+  }
+  public void ElseIfStmt.genEval(PrintStream out) {
+    out.println("IN else if call");
+  }
+  public void ElseStmt.genEval(PrintStream out) {
+    out.println("IN else call");
+  }
+  public void AssigmtStmt.genEval(PrintStream out) {
+    out.println("IN AssigmtStmt call");
+  }
+  public void AssigmtUse.genEval(PrintStream out) {
+    out.println("IN AssigmtUse call");
+  }
+  public void ReturnStmt.genEval(PrintStream out) {
+    out.println("IN ReturnStmt call");
+  }
+  public void WhileStmt.genEval(PrintStream out) {
+    out.println("IN WhileStmt call");
+  }
+  public void Expr.genEval(PrintStream out) {
+    out.println("IN EXPR call");
+  }
+  /**
+   * Generate code to evaluate the expression and
+   * store the result in RAX.
+   *
+   * This must be implemented for every subclass of Expr!
+   */
+  abstract public void Stmt.genEval(PrintStream out);
+
+  public void Numeral.genEval(PrintStream out) {
+    out.println("        movq $" + getNUMERAL() + ", %rax");
+  }
+
+  public void IdUse.genEval(PrintStream out) {
+    out.println("        movq " + decl().address() + ", %rax");
+  }
+
+  public void Mul.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        imulq %rbx, %rax");
+  }
+
+  public void Div.genEval(PrintStream out) {
+    getLeft().genEval(out);
+    out.println("        pushq %rax");
+    getRight().genEval(out);
+    out.println("        movq %rax, %rbx");
+    out.println("        popq %rax");
+    out.println("        movq $0, %rdx");// NB: clear RDX to prepare division RDX:RAX / RBX
+    out.println("        idivq %rbx");
+  }
+
+  /**
+   * Address of local variable variable in the current stack frame.
+   */
+  syn String IdDecl.address() = "-"+(localIndex()*8)+"(%rbp)";
+
+  /**
+   * Local variable counting.
+   */
+  syn int ASTNode.numLocals() = lastNode().localIndex() - localIndex();
+
+  /**
+   * Local variable numbering.
+   */
+  syn int ASTNode.localIndex() = prevNode().localIndex();
+  eq Program.localIndex() = 0;
+  eq IdDecl.localIndex() = prevNode().localIndex() + 1;
+
+  inh ASTNode ASTNode.prevNode();
+  eq ASTNode.getChild(int i).prevNode() = prevNode(i);
+  syn ASTNode ASTNode.lastNode() = prevNode(getNumChild());
+  syn ASTNode ASTNode.prevNode(int i) = i>0 ? getChild(i-1).lastNode() : this;
+
+}

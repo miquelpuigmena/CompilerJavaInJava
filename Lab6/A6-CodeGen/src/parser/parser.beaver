@@ -1,0 +1,205 @@
+%class "LangParser";
+%package "lang.ast";
+
+%embed {:
+	static public class SyntaxError extends RuntimeException { public SyntaxError(String msg) {super(msg);}}
+	// Disable syntax error recovery
+	protected void recoverFromError(Symbol token, TokenStream in) {
+		throw new SyntaxError("Cannot recover from the syntax error");
+	}
+:};
+
+%terminals ID, INT, NUMERAL;
+%terminals LEFTBRACKET, RIGHTBRACKET, LEFTPARENTHESIS, RIGHTPARENTHESIS, COMMA, SEMICOLON;
+%terminals ASSIGN, EQ, NE, GE, GT, LE, LT, MUL, DIV, MOD, ADD, SUB;
+%terminals IF, ELSEIF, ELSE, WHILE, RETURN;
+
+%typeof program         = "Program";
+%typeof stmt_list       = "List";
+%typeof func_list       = "List";
+%typeof stmt            = "Stmt";
+%typeof block_stmts     = "List";
+%typeof block_stmt      = "Stmt";
+%typeof assigmt         = "Stmt";
+%typeof id_use          = "IdUse";
+%typeof id_decl         = "IdDecl";
+%typeof integer         = "Factor";
+%typeof expr            = "Expr";
+%typeof comp_expr       = "CompExpr";
+%typeof sum             = "Expr";
+%typeof term            = "Expr";
+%typeof factor          = "Expr";
+
+%typeof func_args       = "List";
+%typeof func_call_args  = "List";
+%typeof func_arg        = "IdDecl";
+%typeof func_call       = "Expr";
+%typeof func            = "Func";
+
+%typeof block           = "Block";
+%typeof return_stmt     = "Stmt";
+%typeof condition       = "CompExpr";
+%typeof while_stmt      = "Stmt";
+%typeof if_stmt         = "Stmt";
+%typeof elseif_stmt     = "Stmt";
+%typeof elseif_stmts    = "List";
+%typeof else_stmt       = "Opt";
+%typeof func_args_opt   = "List";
+
+%goal program;
+program = func_list.a   {:  return new Program(a); :} ;
+
+id_use =
+    ID.id   {: return new IdUse(id); :}
+    ;
+
+id_decl =
+    ID.id   {: return new IdDecl(id); :}
+    ;
+
+integer =
+    NUMERAL.n   {: return new Numeral(n); :}
+    ;
+
+func_list =
+    func_list.a func.b {: return a.add(b); :}
+    | /* epsilon */ {: return new List(); :}
+    ;
+
+stmt_list =
+    stmt_list.a stmt.b {: return a.add(b); :}
+    | /* epsilon */ {: return new List(); :}
+    ;
+
+//stmt =
+//    func
+//    ;
+
+block =
+    block_stmts.a {: return new Block(a); :}
+    ;
+
+block_stmts =
+    block_stmts.a block_stmt.b {: return a.add(b); :}
+    | /* epsilon */ {: return new List(); :}
+    ;
+
+block_stmt =
+    assigmt
+    | assigmt_use
+    | func_call.f SEMICOLON {: return f; :}
+    | func_primary.f SEMICOLON {: return f; :}
+    | while_stmt
+    | if_stmt
+    | return_stmt
+    ;
+
+else_stmt =
+    ELSE LEFTBRACKET block.b RIGHTBRACKET   {: return new Opt(new ElseStmt(b)); :}
+    | /* epsilon */                         {: return new Opt(); :}
+    ;
+
+elseif_stmts =
+    elseif_stmts.a elseif_stmt.b    {: return a.add(b); :}
+    | /* epsilon */                 {: return new List(); :}
+    ;
+
+elseif_stmt =
+    ELSEIF LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
+        LEFTBRACKET block.b RIGHTBRACKET
+            {: return new ElseIfStmt(a, b); :}
+    ;
+
+if_stmt =
+    IF LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
+        LEFTBRACKET block.b RIGHTBRACKET elseif_stmts.c else_stmt.d
+            {: return new IfStmt(a, b, new ElseIfStmts(c), d); :}
+    ;
+
+while_stmt =
+    WHILE LEFTPARENTHESIS expr.a RIGHTPARENTHESIS
+        LEFTBRACKET block.b RIGHTBRACKET
+            {: return new WhileStmt(a, b); :}
+    ;
+
+return_stmt =
+    RETURN expr.e SEMICOLON
+        {: return new ReturnStmt(e); :}
+    ;
+
+assigmt =
+    INT id_decl.left SEMICOLON                          {: return new AssigmtStmt(left, new Opt()); :}
+    | INT id_decl.left ASSIGN expr.right SEMICOLON      {: return new AssigmtStmt(left, new Opt(right)); :}
+    ;
+
+assigmt_use =
+    id_use.left ASSIGN expr.right SEMICOLON           {: return new AssigmtUse(left, right); :}
+    ;
+
+expr =
+    sum
+    | condition
+	;
+
+sum =
+	sum.a ADD term.b 			{: return new Add(a, b); :}
+	| sum.a SUB term.b 			{: return new Sub(a, b); :}
+	| term
+	;
+
+term =
+    term.a MUL factor.b 		{: return new Mul(a, b); :}
+	| term.a DIV factor.b 		{: return new Div(a, b); :}
+	| term.a MOD factor.b 		{: return new Mod(a, b); :}
+	| factor
+	;
+
+factor =
+    integer
+    | id_use
+    | LEFTPARENTHESIS expr.a RIGHTPARENTHESIS {: return a; :}
+    | func_call
+    | SUB factor.a              {: return new Mul(new Numeral("-1"), a); :}
+    ;
+
+condition =
+    sum.a GT sum.b 			    {: return new GT(a, b); :}
+    | sum.a LT sum.b 			{: return new LT(a, b); :}
+    | sum.a GE sum.b 			{: return new GE(a, b); :}
+    | sum.a LE sum.b 			{: return new LE(a, b); :}
+    | sum.a EQ sum.b 			{: return new EQ(a, b); :}
+    | sum.a NE sum.b 			{: return new NE(a, b); :}
+    ;
+
+func =
+    INT id_decl.a
+        LEFTPARENTHESIS func_args_opt.b RIGHTPARENTHESIS
+            LEFTBRACKET block.c RIGHTBRACKET
+                {: return new Func(a, new FuncArgs(b), c); :}
+    ;
+
+func_arg =
+    INT id_decl
+    ;
+
+func_args_opt =
+    /*epsilon*/                         {: return new List(); :}
+    | func_args
+    ;
+
+func_args =
+    func_arg.a                          {: return new List().add(a); :}
+    | func_args.a COMMA func_arg.b      {: return a.add(b); :}
+    ;
+
+func_call =
+    id_use.a LEFTPARENTHESIS func_call_args.b RIGHTPARENTHESIS
+        {: return new FuncCall(a, new FuncCallArgs(b)); :}
+    | id_use.a LEFTPARENTHESIS RIGHTPARENTHESIS
+          {: return new FuncCall(a, new FuncCallArgs(new List())); :}
+    ;
+
+func_call_args =
+    expr.a                              {: return new List().add(a); :}
+    | func_call_args.a COMMA expr.b 	{: return a.add(b); :}
+    ;

@@ -1,0 +1,21 @@
+aspect TypeAnalysis {
+  
+    syn Type Expr.type();
+    syn Boolean Expr.compatibleType();
+    inh Type Expr.expectedType();
+
+    eq Expr.compatibleType() = type() != expectedType() && type() != UnknownType();
+
+    eq BinaryExpr.type() = IntType();
+    eq CompExpr.type() = BoolType();
+    eq IdDecl.type() = IntType();
+    eq Numeral.type() = IntType();
+    eq UnknownDecl.type() = UnknownType();
+    eq FuncCall.type() = getID().type();
+    eq IdUse.type()  = decl().type();
+
+    eq IfStmt.getCondition().expectedType() = BoolType();
+    eq ElseIfStmt.getCondition().expectedType() = BoolType();
+    eq WhileStmt.getCondition().expectedType() = BoolType();
+    eq Stmt.getChild().expectedType() = IntType();
+}
