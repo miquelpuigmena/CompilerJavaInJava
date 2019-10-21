@@ -29,7 +29,7 @@ aspect Interpreter {
             return Integer.valueOf(e.getMessage());
         }
         if(getDecl().getID().equals("print")){
-            System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
+            //System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
         } else if (getDecl().getID().equals("read")){
             return Integer.valueOf(this.scan.nextInt());
         } //else {

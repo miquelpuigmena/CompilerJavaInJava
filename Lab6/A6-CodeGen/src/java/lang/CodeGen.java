@@ -49,13 +49,6 @@ public class CodeGen {
             }
 
             program.eval();
-            for(Func f : program.getFuncs()) {
-                System.out.println("**************************");
-                System.out.println(f.getDecl().getID());
-                f.functionCalls().forEach(System.out::println);
-                System.out.println("------------------------");
-
-            }
             program.genCode(System.out);
             DrAST_root_node = program; //Enable debugging with DrAST
         } catch (FileNotFoundException e) {
