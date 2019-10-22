@@ -33,23 +33,18 @@ public class WhileStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:197
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:128
    */
-  public void genEval(PrintStream out)  throws Exception {
+  public void genEval(PrintStream out, int j) {
 
     //out.println("IN WhileStmt call");
     out.println("        _startWhile"+localIndex()+":");
-    getCondition().genEval(out);
+    getCondition().genEval(out, j);
     out.append(" _endWhile"+localIndex());
     out.println();
-    try {
-        getThen().genEval(out);
-    } catch (Exception e) {
-        throw new Exception();
-    } finally {
-        out.println("        jmp _startWhile"+localIndex());
-        out.println("        _endWhile"+localIndex()+":");
-    }
+    getThen().genEval(out, j*100);
+    out.println("        jmp _startWhile"+localIndex());
+    out.println("        _endWhile"+localIndex()+":");
   }
   /**
    * @aspect Interpreter

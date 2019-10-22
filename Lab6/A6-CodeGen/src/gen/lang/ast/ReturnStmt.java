@@ -31,11 +31,12 @@ public class ReturnStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:193
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:123
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
     //out.println("IN ReturnStmt call");
-    getReturn().genEval(out);
+    getReturn().genEval(out, j);
+    out.println("        jmp "+enclosingFunction().getDecl().getID()+"_end");
   }
   /**
    * @aspect Interpreter

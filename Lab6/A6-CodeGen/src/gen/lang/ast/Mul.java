@@ -31,19 +31,19 @@ public class Mul extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:275
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:200
    */
-  public void genEval(PrintStream out) {
-    getLeft().genEval(out);
+  public void genEval(PrintStream out, int j) {
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");
     out.println("        popq %rax");
     out.println("        imulq %rbx, %rax");
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:141
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:142
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) * getRight().eval(actrec);

@@ -4,15 +4,19 @@ buf: .skip 1024
 
 .text
 _start:
+        pushq %rbp # From Program
+        movq %rsp, %rbp # From Program
+        call main
+        movq %rax, %rdi
+        movq $60, %rax
+        syscall
+ackermann:
         pushq %rbp # From Func
         movq %rsp, %rbp # From Func
-        subq $8, %rsp # From Func
-        movq $4, %rax
-        pushq %rax # From FuncCall
-        pushq %rbp # From Func
-        movq %rsp, %rbp # From Func
-        subq $16, %rsp # From Func
-        movq 24(%rsp), %rax # From Func
+        subq $24, %rsp # From Func
+        movq 40(%rsp), %rax # From Func
+        movq %rax, -24(%rbp) # From IdDecl
+        movq 48(%rsp), %rax # From Func
         movq %rax, -16(%rbp) # From IdDecl
         movq -16(%rbp), %rax # From IdUse
         pushq %rax
@@ -20,25 +24,182 @@ _start:
         movq %rax, %rbx
         popq %rax
         cmpq %rbx, %rax
-        jne _otherssum_lang.ast.Func_lang.ast.List
+        jne _others__lang.ast.Func238e0d81_lang.ast.List31221be230
+# In add!
+        movq -24(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $1, %rax
+        movq %rax, %rbx
+        popq %rax
+        addq %rbx, %rax
+        jmp ackermann_end
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be230
+        _others__lang.ast.Func238e0d81_lang.ast.List31221be230:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be230
+        _elseIf__lang.ast.Func238e0d81_lang.ast.List31221be230:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be230
+        _else__lang.ast.Func238e0d81_lang.ast.List31221be230:
+        _endIf__lang.ast.Func238e0d81_lang.ast.List31221be230:
+        movq -16(%rbp), %rax # From IdUse
+        pushq %rax
         movq $0, %rax
-        jmp _endIfsum_lang.ast.Func_lang.ast.List
-        _otherssum_lang.ast.Func_lang.ast.List:
-        jmp _endIfsum_lang.ast.Func_lang.ast.List
-        _elseIfsum_lang.ast.Func_lang.ast.List:
-        jmp _endIfsum_lang.ast.Func_lang.ast.List
-        _elsesum_lang.ast.Func_lang.ast.List:
-        _endIfsum_lang.ast.Func_lang.ast.List:
+        movq %rax, %rbx
+        popq %rax
+        cmpq %rbx, %rax
+        jle _others__lang.ast.Func238e0d81_lang.ast.List31221be231
+        movq -24(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $0, %rax
+        movq %rax, %rbx
+        popq %rax
+        cmpq %rbx, %rax
+        jne _others__lang.ast.Func238e0d81_lang.ast.List31221be23100
+        movq -16(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $1, %rax
+        movq %rax, %rbx
+        popq %rax
+        subq %rbx, %rax
+        pushq %rax # From FuncCall
+        movq $1, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        jmp ackermann_end
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23100
+        _others__lang.ast.Func238e0d81_lang.ast.List31221be23100:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23100
+        _elseIf__lang.ast.Func238e0d81_lang.ast.List31221be23100:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23100
+        _else__lang.ast.Func238e0d81_lang.ast.List31221be23100:
+        _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23100:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be231
+        _others__lang.ast.Func238e0d81_lang.ast.List31221be231:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be231
+        _elseIf__lang.ast.Func238e0d81_lang.ast.List31221be231:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be231
+        _else__lang.ast.Func238e0d81_lang.ast.List31221be231:
+        _endIf__lang.ast.Func238e0d81_lang.ast.List31221be231:
+        movq -16(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $0, %rax
+        movq %rax, %rbx
+        popq %rax
+        cmpq %rbx, %rax
+        jle _others__lang.ast.Func238e0d81_lang.ast.List31221be232
+        movq -24(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $0, %rax
+        movq %rax, %rbx
+        popq %rax
+        cmpq %rbx, %rax
+        jle _others__lang.ast.Func238e0d81_lang.ast.List31221be23200
+        movq -16(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $1, %rax
+        movq %rax, %rbx
+        popq %rax
+        subq %rbx, %rax
+        pushq %rax # From FuncCall
+        movq -16(%rbp), %rax # From IdUse
+        pushq %rax # From FuncCall
+        movq -24(%rbp), %rax # From IdUse
+        pushq %rax
+        movq $1, %rax
+        movq %rax, %rbx
+        popq %rax
+        subq %rbx, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        jmp ackermann_end
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23200
+        _others__lang.ast.Func238e0d81_lang.ast.List31221be23200:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23200
+        _elseIf__lang.ast.Func238e0d81_lang.ast.List31221be23200:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23200
+        _else__lang.ast.Func238e0d81_lang.ast.List31221be23200:
+        _endIf__lang.ast.Func238e0d81_lang.ast.List31221be23200:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be232
+        _others__lang.ast.Func238e0d81_lang.ast.List31221be232:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be232
+        _elseIf__lang.ast.Func238e0d81_lang.ast.List31221be232:
+        jmp _endIf__lang.ast.Func238e0d81_lang.ast.List31221be232
+        _else__lang.ast.Func238e0d81_lang.ast.List31221be232:
+        _endIf__lang.ast.Func238e0d81_lang.ast.List31221be232:
+        movq $0, %rax
+        jmp ackermann_end
+        ackermann_end:
         movq %rbp, %rsp
         popq %rbp
+        ret
+main:
+        pushq %rbp # From Func
+        movq %rsp, %rbp # From Func
+        subq $8, %rsp # From Func
+        movq $2, %rax
+        pushq %rax # From FuncCall
+        movq $2, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
         pushq %rax # From FuncCall
         call print
-        movq $6, %rax
+        addq $8, %rsp
+        movq $2, %rax
+        pushq %rax # From FuncCall
+        movq $3, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        pushq %rax # From FuncCall
+        call print
+        addq $8, %rsp
+        movq $2, %rax
+        pushq %rax # From FuncCall
+        movq $4, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        pushq %rax # From FuncCall
+        call print
+        addq $8, %rsp
+        movq $3, %rax
+        pushq %rax # From FuncCall
+        movq $2, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        pushq %rax # From FuncCall
+        call print
+        addq $8, %rsp
+        movq $3, %rax
+        pushq %rax # From FuncCall
+        movq $3, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        pushq %rax # From FuncCall
+        call print
+        addq $8, %rsp
+        movq $3, %rax
+        pushq %rax # From FuncCall
+        movq $4, %rax
+        pushq %rax # From FuncCall
+        call ackermann
+        addq $16, %rsp
+        pushq %rax # From FuncCall
+        call print
+        addq $8, %rsp
+        movq $0, %rax
+        jmp main_end
+        main_end:
         movq %rbp, %rsp
         popq %rbp
-        movq $0, %rdi
-        movq $60, %rax
-        syscall
+        ret
 # Procedure to print number to stdout.
 # C signature: void print(long int)
 print:
@@ -78,3 +239,70 @@ print_end:
         popq %rbp
         ret
 
+# Procedure to read number from stdin.
+# C signature: long long int read(void)
+read:
+        pushq %rbp
+        movq %rsp, %rbp
+        ### R9  = sign
+        movq $1, %r9            # sign <- 1
+        ### R10 = sum
+        movq $0, %r10           # sum <- 0
+skip_ws: # skip any leading whitespace
+        movq $0, %rdi
+        leaq buf(%rip), %rsi
+        movq $1, %rdx
+        movq $0, %rax
+        syscall                 # get one char: sys_read(0, buf, 1)
+        cmpq $0, %rax
+        jle atoi_done           # nchar <= 0
+        movb (%rsi), %cl        # c <- current char
+        cmp $32, %cl
+        je skip_ws              # c == space
+        cmp $13, %cl
+        je skip_ws              # c == CR
+        cmp $10, %cl
+        je skip_ws              # c == NL
+        cmp $9, %cl
+        je skip_ws              # c == tab
+        cmp $45, %cl            # check if negative
+        jne atoi_loop
+        movq $-1, %r9           # sign <- -1
+        movq $0, %rdi
+        leaq buf(%rip), %rsi
+        movq $1, %rdx
+        movq $0, %rax
+        syscall                 # get one char: sys_read(0, buf, 1)
+atoi_loop:
+        cmpq $0, %rax           # while (nchar > 0)
+        jle atoi_done           # leave loop if nchar <= 0
+        movzbq (%rsi), %rcx     # move byte, zero extend to quad-word
+        cmpq $0x30, %rcx        # test if < '0'
+        jl atoi_done            # character is not numeric
+        cmpq $0x39, %rcx        # test if > '9'
+        jg atoi_done            # character is not numeric
+        imulq $10, %r10         # multiply sum by 10
+        subq $0x30, %rcx        # value of character
+        addq %rcx, %r10         # add to sum
+        movq $0, %rdi
+        leaq buf(%rip), %rsi
+        movq $1, %rdx
+        movq $0, %rax
+        syscall                 # get one char: sys_read(0, buf, 1)
+        jmp atoi_loop           # loop back
+atoi_done:
+        imulq %r9, %r10         # sum *= sign
+        movq %r10, %rax         # put result value in RAX
+        popq %rbp
+        ret
+
+print_string:
+        pushq %rbp
+        movq %rsp, %rbp
+        movq $1, %rdi
+        movq 16(%rbp), %rsi
+        movq 24(%rbp), %rdx
+        movq $1, %rax
+        syscall
+        popq %rbp
+        ret

@@ -31,12 +31,12 @@ public class Div extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:284
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:209
    */
-  public void genEval(PrintStream out) {
-    getLeft().genEval(out);
+  public void genEval(PrintStream out, int j) {
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");
     out.println("        popq %rax");
     out.println("        movq $0, %rdx");       // NB: clear RDX to prepare division RDX:RAX / RBX
@@ -44,7 +44,7 @@ public class Div extends BinaryExpr implements Cloneable {
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:144
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:145
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) / getRight().eval(actrec);

@@ -22,19 +22,20 @@ import java.util.Scanner;
 public class ElseIfStmts extends ASTNode<ASTNode> implements Cloneable {
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:157
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:86
    */
-  public void genEval(PrintStream out) throws Exception{
+  public void genEval(PrintStream out, int j){
       Func enc_f = enclosingFunction();
-      String unique = enc_f.getDecl().uniqueName();
+      String unique = enc_f.getDecl().uniqueName()+String.valueOf(localIndex())+j;
+      //Integer unique = localIndex();
     int i = 0;
 
     for(i = 0; i < getNumElseIfStmt(); i++){
-      getElseIfStmt(i).getCondition().genEval(out);
+      getElseIfStmt(i).getCondition().genEval(out, j);
       out.append(" _skipThen"+unique+i);
       out.println();
 
-      getElseIfStmt(i).getThen().genEval(out);
+      getElseIfStmt(i).getThen().genEval(out, j*100);
       out.println("        jmp _condSucc"+unique);
 
       out.println("        _skipThen"+unique+i+":");

@@ -46,43 +46,41 @@ public class IfStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:120
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:51
    */
-  public void genEval(PrintStream out) throws Exception{
+  public void genEval(PrintStream out, int j) {
       Func enc_f = enclosingFunction();
-      String unique = enc_f.getDecl().uniqueName();
-      getCondition().genEval(out);
+      //String unique = enc_f.getDecl().uniqueName();
+      String unique = enc_f.uniqueName()+String.valueOf(localIndex())+j;
+      //Integer unique = localIndex();
+      getCondition().genEval(out, j);
       out.append(" _others"+unique);
       out.println();
-      try{
-        getThen().genEval(out);
-      } catch (Exception e) {
-        throw e;
-      } finally {
-          out.println("        jmp _endIf"+unique);
+      getThen().genEval(out, j*100);
+      out.println("        jmp _endIf"+unique);
 
-          out.println("        _others"+unique+":");
-          if(getElif().getNumElseIfStmt() > 0){      // if there's elseif
-            out.println("        jmp _elseIf"+unique);
-          }else if (hasElse()){                      // if there's no elseif but there is else
-            out.println("        jmp _else"+unique);
-          }else{                                     // no elseif AND no else
-            out.println("        jmp _endIf"+unique);
-          }
-
-          out.println("        _elseIf"+unique+":");
-          if(getElif().getNumElseIfStmt() > 0){
-            getElif().genEval(out);
-          }
-          out.println("        jmp _endIf"+unique);
-
-          out.println("        _else"+unique+":");
-          if(hasElse()){
-            getElse().genEval(out);
-          }
-
-          out.println("        _endIf"+unique+":");
+      out.println("        _others"+unique+":");
+      if(getElif().getNumElseIfStmt() > 0){      // if there's elseif
+        out.println("        jmp _elseIf"+unique);
+      }else if (hasElse()){                      // if there's no elseif but there is else
+        out.println("        jmp _else"+unique);
+      }else{                                     // no elseif AND no else
+        out.println("        jmp _endIf"+unique);
       }
+
+      out.println("        _elseIf"+unique+":");
+      if(getElif().getNumElseIfStmt() > 0){
+        getElif().genEval(out, j);
+      }
+      out.println("        jmp _endIf"+unique);
+
+      out.println("        _else"+unique+":");
+      if(hasElse()){
+        getElse().genEval(out, j);
+      }
+
+      out.println("        _endIf"+unique+":");
+
   }
   /**
    * @aspect Interpreter

@@ -31,12 +31,12 @@ public class Mod extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:265
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:190
    */
-  public void genEval(PrintStream out) {    // a MOD b => a - (a/b)
-    getLeft().genEval(out);
+  public void genEval(PrintStream out, int j) {    // a MOD b => a - (a/b)
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");          // push a to stack
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");     // right -> rbx = b
     out.println("        popq %rax");           // pop left -> rax = a
     out.println("        movq $0, %rdx");       // clear rdx before using idivq
@@ -45,7 +45,7 @@ public class Mod extends BinaryExpr implements Cloneable {
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:147
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:148
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) % getRight().eval(actrec);

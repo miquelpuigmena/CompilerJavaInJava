@@ -38,13 +38,13 @@ public class AssigmtStmt extends Stmt implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:182
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:112
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
     //out.println("IN AssigmtStmt call");
-    if(hasRight()) getRight().genEval(out);
+    if(hasRight()) getRight().genEval(out, j);
     else out.println("        movq $0, %rax");
-    getLeft().genEval(out);
+    getLeft().genEval(out, j);
   }
   /**
    * @aspect Interpreter
@@ -278,10 +278,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:51
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:61
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:51")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:61")
   public IdDecl localLookup(String name) {
     Object _parameters = name;
     if (localLookup_String_visited == null) localLookup_String_visited = new java.util.HashSet(4);
@@ -308,10 +308,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute inh
    * @aspect CircularDefinitions
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:100
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:110
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:100")
+  @ASTNodeAnnotation.Source(aspect="CircularDefinitions", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:110")
   public boolean inExprOf(IdDecl decl) {
     Object _parameters = decl;
     if (inExprOf_IdDecl_visited == null) inExprOf_IdDecl_visited = new java.util.HashSet(4);
@@ -342,12 +342,12 @@ protected java.util.Set inExprOf_IdDecl_visited;
   protected java.util.Map inExprOf_IdDecl_values;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:99
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:109
    * @apilevel internal
    */
   public boolean Define_inExprOf(ASTNode _callerNode, ASTNode _childNode, IdDecl decl) {
     if (_callerNode == getRightOptNoTransform()) {
-      // @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:101
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:111
       return getLeft() == decl || inExprOf(decl);
     }
     else {
@@ -355,7 +355,7 @@ protected java.util.Set inExprOf_IdDecl_visited;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:99
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:109
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */

@@ -33,20 +33,19 @@ public class FuncCall extends Call implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:227
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:153
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
     // Allocate space for local variables:
-    //System.out.println("in FuncCall");
     IdDecl decl = lookup(getID().getID());
     Func func = (Func) decl.getParent();
-    //System.out.println(decl.getID());
-
     for(Expr e : getArgs().getExprs()) {
-        e.genEval(out);
+        e.genEval(out, j);
         out.println("        pushq %rax # From FuncCall");
     }
-    func.genEval(out);
+    out.println("        call "+func.getDecl().getID());
+    out.println("        addq $"+8*(func.getArgs().getNumIdDecl())+", %rsp");
+
   }
   /**
    * @aspect Interpreter
@@ -58,6 +57,7 @@ public class FuncCall extends Call implements Cloneable {
         Func func = (Func) decl.getParent();
         int i = 0;
         for(Expr e : getArgs().getExprs()) {
+            //System.out.println(func.getArgs().getIdDecl(i).uniqueName()+getID());
             innerActrec.store(func.getArgs().getIdDecl(i).uniqueName(), e.eval(actrec));
             i++;
         }
@@ -261,10 +261,10 @@ protected boolean areArgsIncorrect_visited = false;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:30
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:40
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:30")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:40")
   public boolean areArgsIncorrect() {
     ASTState state = state();
     if (areArgsIncorrect_computed) {
@@ -340,10 +340,10 @@ protected boolean type_visited = false;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:55
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:65
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:55")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:65")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);

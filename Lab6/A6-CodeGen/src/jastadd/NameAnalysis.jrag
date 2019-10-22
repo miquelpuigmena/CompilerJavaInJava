@@ -11,17 +11,27 @@ aspect NameAnalysis {
         return UnknownDecl();
     }
 
-
 	inh IdDecl IdUse.lookup(String name);
-	syn String IdDecl.uniqueName() {
-	    ASTNode parent = getParent();
-	    String id = getID();
-	    while(!Program.class.isInstance(parent)) {
-	        id = id+"_"+parent.getClass().getName();
-	        parent = parent.getParent();
-	    }
-	    return id;
-	}
+    syn String ASTNode.uniqueName() {
+        ASTNode parent = getParent();
+        String id = "__"+this+"";
+        while(!Program.class.isInstance(parent)) {
+            //if(IdDecl.class.isInstance(parent)) id = id + getID();
+            //if(FuncCall.class.isInstance(parent)) {
+            //    FuncCall fc = (FuncCall) parent;
+            //    for (Expr e : fc.getArgs().getExprs()) {
+            //        if(Numeral.class.isInstance(e)) {
+            //            Numeral num = (Numeral) e;
+            //            id = id + num.getNUMERAL();
+            //        }
+            //    }
+            //}
+            id = id+"_"+parent;
+            parent = parent.getParent();
+        }
+        return id.replace("@", "");
+    }
+
 
 	syn IdDecl IdUse.decl() = lookup(getID());
 

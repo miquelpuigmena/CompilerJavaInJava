@@ -29,14 +29,14 @@ public class Numeral extends Atomic implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:393
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:387
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
     out.println("        movq $" + getNUMERAL() + ", %rax");
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:127
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:128
    */
   public int eval(ActivationRecord actrec) {
 	    //System.out.println("in numeral");

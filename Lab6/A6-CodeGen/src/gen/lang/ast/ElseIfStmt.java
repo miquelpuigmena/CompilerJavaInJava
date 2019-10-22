@@ -22,9 +22,9 @@ import java.util.Scanner;
 public class ElseIfStmt extends Stmt implements Cloneable {
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:176
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:106
    */
-  public void genEval(PrintStream out){
+  public void genEval(PrintStream out, int j){
   }
   /**
    * @aspect Interpreter

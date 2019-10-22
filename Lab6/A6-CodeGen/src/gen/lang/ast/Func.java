@@ -38,31 +38,24 @@ public class Func extends Stmt implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:27
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:28
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
 
-    if(getDecl().getID().equals("print")) {
-        out.println("        call print");
-    } else {
-        out.println("        pushq %rbp # From Func");
-        out.println("        movq %rsp, %rbp # From Func");
-        out.println("        subq $" + (numLocals()*8) + ", %rsp # From Func");
-        for(int i = 0; i < getArgs().getNumIdDecl(); i++) {
-          out.println("        movq "+ ((numLocals() + 1 + i)*8) +"(%rsp), %rax # From Func");
-          getArgs().getIdDecl(getArgs().getNumIdDecl()-i-1).genEval(out);
-        }
-        try{
-            getBlock().genEval(out);
-        } catch (Exception e) {
-
-        } finally {
-            // De-Allocate local variables
-            out.println("        movq %rbp, %rsp");
-            out.println("        popq %rbp");
-        }
+    out.println(getDecl().getID()+":");
+    out.println("        pushq %rbp # From Func");
+    out.println("        movq %rsp, %rbp # From Func");
+    out.println("        subq $" + ((numLocals())*8) + ", %rsp # From Func");
+    for(int i = 0; i < getArgs().getNumIdDecl(); i++) {
+      out.println("        movq "+ ((numLocals() + 2 + i)*8) +"(%rsp), %rax # From Func");
+      getArgs().getIdDecl(getArgs().getNumIdDecl()-i-1).genEval(out, j);
     }
-
+    getBlock().genEval(out, j);
+    // De-Allocate local variables
+    out.println("        "+getDecl().getID()+"_end:");
+    out.println("        movq %rbp, %rsp");
+    out.println("        popq %rbp");
+    out.println("        ret");
   }
   /**
    * @aspect Interpreter
@@ -75,9 +68,9 @@ public class Func extends Stmt implements Cloneable {
             return Integer.valueOf(e.getMessage());
         }
         if(getDecl().getID().equals("print")){
-            //System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
+            // System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
         } else if (getDecl().getID().equals("read")){
-            return Integer.valueOf(this.scan.nextInt());
+            // return Integer.valueOf(this.scan.nextInt());
         } //else {
             //throw new RuntimeException("Return statement missing");
         //}
@@ -310,10 +303,10 @@ protected java.util.Set localLookup_String_visited;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:56
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:66
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:56")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:66")
   public IdDecl localLookup(String name) {
     Object _parameters = name;
     if (localLookup_String_visited == null) localLookup_String_visited = new java.util.HashSet(4);
@@ -349,10 +342,10 @@ protected boolean localIndex_visited = false;
   /**
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:411
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:405
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:409")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:403")
   public int localIndex() {
     ASTState state = state();
     if (localIndex_computed) {
@@ -408,10 +401,10 @@ protected boolean isUnknown_visited = false;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:58
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:68
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:58")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:68")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);
@@ -442,12 +435,12 @@ protected java.util.Set lookup_String_visited;
   protected java.util.Map lookup_String_values;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:28
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:38
    * @apilevel internal
    */
   public IdDecl Define_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
     if (_callerNode == getBlockNoTransform()) {
-      // @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:60
+      // @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:70
       {
       		for(IdDecl idDecl : getArgs().getIdDecls()){
       			if(idDecl.getID().equals(name)){
@@ -462,7 +455,7 @@ protected java.util.Set lookup_String_visited;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:28
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:38
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */

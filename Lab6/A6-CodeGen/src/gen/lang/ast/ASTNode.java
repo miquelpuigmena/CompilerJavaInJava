@@ -133,7 +133,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
                 return f;
             }
         }
-        throw new RuntimeException("No" + name + "function");
+        throw new RuntimeException("No " + name + " function");
     }
   /**
    * @declaredat ASTNode:1
@@ -407,6 +407,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
    * @declaredat ASTNode:296
    */
   public void flushAttrCache() {
+    uniqueName_reset();
     numLocals_reset();
     localIndex_reset();
     lastNode_reset();
@@ -421,12 +422,12 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
     BoolType_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:311
+   * @declaredat ASTNode:312
    */
   public void flushCollectionCache() {
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:314
+   * @declaredat ASTNode:315
    */
   public ASTNode<T> clone() throws CloneNotSupportedException {
     ASTNode node = (ASTNode) super.clone();
@@ -434,7 +435,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:320
+   * @declaredat ASTNode:321
    */
   public ASTNode<T> copy() {
     try {
@@ -454,7 +455,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:339
+   * @declaredat ASTNode:340
    */
   @Deprecated
   public ASTNode<T> fullCopy() {
@@ -465,7 +466,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:349
+   * @declaredat ASTNode:350
    */
   public ASTNode<T> treeCopyNoTransform() {
     ASTNode tree = (ASTNode) copy();
@@ -486,7 +487,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:369
+   * @declaredat ASTNode:370
    */
   public ASTNode<T> treeCopy() {
     ASTNode tree = (ASTNode) copy();
@@ -504,7 +505,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
   /**
    * Performs a full traversal of the tree using getChild to trigger rewrites
    * @apilevel low-level
-   * @declaredat ASTNode:386
+   * @declaredat ASTNode:387
    */
   public void doFullTraversal() {
     for (int i = 0; i < getNumChild(); i++) {
@@ -512,7 +513,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
     }
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:392
+   * @declaredat ASTNode:393
    */
   protected boolean is$Equal(ASTNode n1, ASTNode n2) {
     if (n1 == null && n2 == null) return true;
@@ -520,7 +521,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
     return n1.is$Equal(n2);
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:398
+   * @declaredat ASTNode:399
    */
   protected boolean is$Equal(ASTNode node) {
     if (getClass() != node.getClass()) {
@@ -568,6 +569,64 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol implements Cloneab
   }
 
 /** @apilevel internal */
+protected boolean uniqueName_visited = false;
+  /** @apilevel internal */
+  private void uniqueName_reset() {
+    uniqueName_computed = false;
+    
+    uniqueName_value = null;
+    uniqueName_visited = false;
+  }
+  /** @apilevel internal */
+  protected boolean uniqueName_computed = false;
+
+  /** @apilevel internal */
+  protected String uniqueName_value;
+
+  /**
+   * @attribute syn
+   * @aspect NameAnalysis
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:15
+   */
+  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:15")
+  public String uniqueName() {
+    ASTState state = state();
+    if (uniqueName_computed) {
+      return uniqueName_value;
+    }
+    if (uniqueName_visited) {
+      throw new RuntimeException("Circular definition of attribute ASTNode.uniqueName().");
+    }
+    uniqueName_visited = true;
+    state().enterLazyAttribute();
+    uniqueName_value = uniqueName_compute();
+    uniqueName_computed = true;
+    state().leaveLazyAttribute();
+    uniqueName_visited = false;
+    return uniqueName_value;
+  }
+  /** @apilevel internal */
+  private String uniqueName_compute() {
+          ASTNode parent = getParent();
+          String id = "__"+this+"";
+          while(!Program.class.isInstance(parent)) {
+              //if(IdDecl.class.isInstance(parent)) id = id + getID();
+              //if(FuncCall.class.isInstance(parent)) {
+              //    FuncCall fc = (FuncCall) parent;
+              //    for (Expr e : fc.getArgs().getExprs()) {
+              //        if(Numeral.class.isInstance(e)) {
+              //            Numeral num = (Numeral) e;
+              //            id = id + num.getNUMERAL();
+              //        }
+              //    }
+              //}
+              id = id+"_"+parent;
+              parent = parent.getParent();
+          }
+          return id.replace("@", "");
+      }
+/** @apilevel internal */
 protected boolean numLocals_visited = false;
   /** @apilevel internal */
   private void numLocals_reset() {
@@ -584,10 +643,10 @@ protected boolean numLocals_visited = false;
    * Local variable counting.
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:404
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:398
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:404")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:398")
   public int numLocals() {
     ASTState state = state();
     if (numLocals_computed) {
@@ -621,10 +680,10 @@ protected boolean localIndex_visited = false;
    * Local variable numbering.
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:409
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:403
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:409")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:403")
   public int localIndex() {
     ASTState state = state();
     if (localIndex_computed) {
@@ -659,10 +718,10 @@ protected boolean lastNode_visited = false;
   /**
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:416
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:410
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:416")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:410")
   public ASTNode lastNode() {
     ASTState state = state();
     if (lastNode_computed) {
@@ -692,10 +751,10 @@ protected java.util.Set prevNode_int_visited;
   /**
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:417
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:411
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:417")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:411")
   public ASTNode prevNode(int i) {
     Object _parameters = i;
     if (prevNode_int_visited == null) prevNode_int_visited = new java.util.HashSet(4);
@@ -870,10 +929,10 @@ protected boolean UnknownType_visited = false;
   /**
    * @attribute inh
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:414
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:408
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:414")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:408")
   public ASTNode prevNode() {
     ASTState state = state();
     if (prevNode_computed) {
@@ -1020,7 +1079,7 @@ protected boolean BoolType_visited = false;
   protected BoolType BoolType_value;
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:414
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:408
    * @apilevel internal
    */
   public ASTNode Define_prevNode(ASTNode _callerNode, ASTNode _childNode) {
@@ -1028,7 +1087,7 @@ protected boolean BoolType_visited = false;
     return prevNode(i);
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:414
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:408
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute prevNode
    */
@@ -1108,7 +1167,7 @@ protected boolean BoolType_visited = false;
   }
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:69
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:79
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */
@@ -1128,7 +1187,7 @@ protected boolean BoolType_visited = false;
   }
 
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:101
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:111
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */

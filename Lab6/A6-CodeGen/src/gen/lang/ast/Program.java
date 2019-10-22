@@ -39,25 +39,99 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
     out.println(".text");
     out.println("_start:");
 
-    //out.println("        movq %rsp, %rbp");
-    Func f_main = getFuncFromList(getFuncs(), "main");
-    f_main.genEval(out);// stores result in RAX
-
-
+    out.println("        pushq %rbp # From Program");
+    out.println("        movq %rsp, %rbp # From Program");
+    out.println("        call main");
     // Call sys-exit
-    out.println("        movq $0, %rdi");
+    out.println("        movq %rax, %rdi");
     out.println("        movq $60, %rax");
     out.println("        syscall");
-
+    for(Func f : getFuncs()) {
+        f.genEval(out, 0);
+    }
     writePrint(out);
-
+    writeRead(out);
   }
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:351
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:275
+   */
+  public void writeRead(PrintStream out){
+    // Helper procedures for input:
+    out.println("# Procedure to read number from stdin.");
+    out.println("# C signature: long long int read(void)");
+    out.println("read:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        ### R9  = sign");
+    out.println("        movq $1, %r9            # sign <- 1");
+    out.println("        ### R10 = sum");
+    out.println("        movq $0, %r10           # sum <- 0");
+    out.println("skip_ws: # skip any leading whitespace");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("        cmpq $0, %rax");
+    out.println("        jle atoi_done           # nchar <= 0");
+    out.println("        movb (%rsi), %cl        # c <- current char");
+    out.println("        cmp $32, %cl");
+    out.println("        je skip_ws              # c == space");
+    out.println("        cmp $13, %cl");
+    out.println("        je skip_ws              # c == CR");
+    out.println("        cmp $10, %cl");
+    out.println("        je skip_ws              # c == NL");
+    out.println("        cmp $9, %cl");
+    out.println("        je skip_ws              # c == tab");
+    out.println("        cmp $45, %cl            # check if negative");
+    out.println("        jne atoi_loop");
+    out.println("        movq $-1, %r9           # sign <- -1");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("atoi_loop:");
+    out.println("        cmpq $0, %rax           # while (nchar > 0)");
+    out.println("        jle atoi_done           # leave loop if nchar <= 0");
+    out.println("        movzbq (%rsi), %rcx     # move byte, zero extend to quad-word");
+    out.println("        cmpq $0x30, %rcx        # test if < '0'");
+    out.println("        jl atoi_done            # character is not numeric");
+    out.println("        cmpq $0x39, %rcx        # test if > '9'");
+    out.println("        jg atoi_done            # character is not numeric");
+    out.println("        imulq $10, %r10         # multiply sum by 10");
+    out.println("        subq $0x30, %rcx        # value of character");
+    out.println("        addq %rcx, %r10         # add to sum");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("        jmp atoi_loop           # loop back");
+    out.println("atoi_done:");
+    out.println("        imulq %r9, %r10         # sum *= sign");
+    out.println("        movq %r10, %rax         # put result value in RAX");
+    out.println("        popq %rbp");
+    out.println("        ret");
+    out.println();
+    out.println("print_string:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        movq $1, %rdi");
+    out.println("        movq 16(%rbp), %rsi");
+    out.println("        movq 24(%rbp), %rdx");
+    out.println("        movq $1, %rax");
+    out.println("        syscall");
+    out.println("        popq %rbp");
+    out.println("        ret");
+  }
+  /**
+   * @aspect CodeGen
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:345
    */
   public void writePrint(PrintStream out){
-// Helper procedures for input/output:
+    // Helper procedures for output:
     out.println("# Procedure to print number to stdout.");
     out.println("# C signature: void print(long int)");
     out.println("print:");
@@ -565,10 +639,10 @@ protected boolean localIndex_visited = false;
   /**
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:410
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:404
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:409")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:403")
   public int localIndex() {
     ASTState state = state();
     if (localIndex_computed) {
@@ -712,7 +786,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:28
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:38
    * @apilevel internal
    */
   public IdDecl Define_lookup(ASTNode _callerNode, ASTNode _childNode, String name) {
@@ -735,7 +809,7 @@ protected boolean BoolType_visited = false;
     }
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:28
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:38
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute lookup
    */
@@ -743,7 +817,7 @@ protected boolean BoolType_visited = false;
     return true;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:99
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:109
    * @apilevel internal
    */
   public boolean Define_inExprOf(ASTNode _callerNode, ASTNode _childNode, IdDecl decl) {
@@ -751,7 +825,7 @@ protected boolean BoolType_visited = false;
     return false;
   }
   /**
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:99
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:109
    * @apilevel internal
    * @return {@code true} if this node has an equation for the inherited attribute inExprOf
    */

@@ -15,7 +15,7 @@ import java.util.Scanner;
 /**
  * @ast class
  * @aspect Interpreter
- * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:169
+ * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:170
  */
 public class ActivationRecord extends java.lang.Object {
   

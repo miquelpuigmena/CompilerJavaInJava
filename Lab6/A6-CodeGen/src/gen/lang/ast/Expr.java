@@ -22,9 +22,9 @@ import java.util.Scanner;
 public abstract class Expr extends Stmt implements Cloneable {
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:247
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:172
    */
-  abstract public void genEval(PrintStream out);
+  abstract public void genEval(PrintStream out, int j);
   /**
    * @aspect Interpreter
    * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:23

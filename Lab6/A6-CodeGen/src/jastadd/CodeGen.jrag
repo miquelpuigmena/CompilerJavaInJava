@@ -11,100 +11,90 @@ aspect CodeGen {
     out.println(".text");
     out.println("_start:");
 
-    //out.println("        movq %rsp, %rbp");
-    Func f_main = getFuncFromList(getFuncs(), "main");
-    f_main.genEval(out);// stores result in RAX
-
-
+    out.println("        pushq %rbp # From Program");
+    out.println("        movq %rsp, %rbp # From Program");
+    out.println("        call main");
     // Call sys-exit
-    out.println("        movq $0, %rdi");
+    out.println("        movq %rax, %rdi");
     out.println("        movq $60, %rax");
     out.println("        syscall");
-
+    for(Func f : getFuncs()) {
+        f.genEval(out, 0);
+    }
     writePrint(out);
-
+    writeRead(out);
   }
 
-  public void Func.genEval(PrintStream out) {
+  public void Func.genEval(PrintStream out, int j) {
 
-    if(getDecl().getID().equals("print")) {
-        out.println("        call print");
-    } else {
-        out.println("        pushq %rbp # From Func");
-        out.println("        movq %rsp, %rbp # From Func");
-        out.println("        subq $" + (numLocals()*8) + ", %rsp # From Func");
-        for(int i = 0; i < getArgs().getNumIdDecl(); i++) {
-          out.println("        movq "+ ((numLocals() + 1 + i)*8) +"(%rsp), %rax # From Func");
-          getArgs().getIdDecl(getArgs().getNumIdDecl()-i-1).genEval(out);
-        }
-        try{
-            getBlock().genEval(out);
-        } catch (Exception e) {
-
-        } finally {
-            // De-Allocate local variables
-            out.println("        movq %rbp, %rsp");
-            out.println("        popq %rbp");
-        }
+    out.println(getDecl().getID()+":");
+    out.println("        pushq %rbp # From Func");
+    out.println("        movq %rsp, %rbp # From Func");
+    out.println("        subq $" + ((numLocals())*8) + ", %rsp # From Func");
+    for(int i = 0; i < getArgs().getNumIdDecl(); i++) {
+      out.println("        movq "+ ((numLocals() + 2 + i)*8) +"(%rsp), %rax # From Func");
+      getArgs().getIdDecl(getArgs().getNumIdDecl()-i-1).genEval(out, j);
     }
-
+    getBlock().genEval(out, j);
+    // De-Allocate local variables
+    out.println("        "+getDecl().getID()+"_end:");
+    out.println("        movq %rbp, %rsp");
+    out.println("        popq %rbp");
+    out.println("        ret");
   }
-  public void Block.genEval(PrintStream out) throws Exception{
-    Boolean returned = false;
+  public void Block.genEval(PrintStream out, int j) {
     for (Stmt s : getStmts()) {
-      s.genEval(out);
-      if(ReturnStmt.class.isInstance(s)) throw new Exception("Empty :)");
+      s.genEval(out, j++);
     }
   }
 
-  public void IfStmt.genEval(PrintStream out) throws Exception{
+  public void IfStmt.genEval(PrintStream out, int j) {
       Func enc_f = enclosingFunction();
-      String unique = enc_f.getDecl().uniqueName();
-      getCondition().genEval(out);
+      //String unique = enc_f.getDecl().uniqueName();
+      String unique = enc_f.uniqueName()+String.valueOf(localIndex())+j;
+      //Integer unique = localIndex();
+      getCondition().genEval(out, j);
       out.append(" _others"+unique);
       out.println();
-      try{
-        getThen().genEval(out);
-      } catch (Exception e) {
-        throw e;
-      } finally {
-          out.println("        jmp _endIf"+unique);
+      getThen().genEval(out, j*100);
+      out.println("        jmp _endIf"+unique);
 
-          out.println("        _others"+unique+":");
-          if(getElif().getNumElseIfStmt() > 0){      // if there's elseif
-            out.println("        jmp _elseIf"+unique);
-          }else if (hasElse()){                      // if there's no elseif but there is else
-            out.println("        jmp _else"+unique);
-          }else{                                     // no elseif AND no else
-            out.println("        jmp _endIf"+unique);
-          }
-
-          out.println("        _elseIf"+unique+":");
-          if(getElif().getNumElseIfStmt() > 0){
-            getElif().genEval(out);
-          }
-          out.println("        jmp _endIf"+unique);
-
-          out.println("        _else"+unique+":");
-          if(hasElse()){
-            getElse().genEval(out);
-          }
-
-          out.println("        _endIf"+unique+":");
+      out.println("        _others"+unique+":");
+      if(getElif().getNumElseIfStmt() > 0){      // if there's elseif
+        out.println("        jmp _elseIf"+unique);
+      }else if (hasElse()){                      // if there's no elseif but there is else
+        out.println("        jmp _else"+unique);
+      }else{                                     // no elseif AND no else
+        out.println("        jmp _endIf"+unique);
       }
+
+      out.println("        _elseIf"+unique+":");
+      if(getElif().getNumElseIfStmt() > 0){
+        getElif().genEval(out, j);
+      }
+      out.println("        jmp _endIf"+unique);
+
+      out.println("        _else"+unique+":");
+      if(hasElse()){
+        getElse().genEval(out, j);
+      }
+
+      out.println("        _endIf"+unique+":");
+
   }
 
-  public void ElseIfStmts.genEval(PrintStream out) throws Exception{
+  public void ElseIfStmts.genEval(PrintStream out, int j){
       Func enc_f = enclosingFunction();
-      String unique = enc_f.getDecl().uniqueName();
+      String unique = enc_f.getDecl().uniqueName()+String.valueOf(localIndex())+j;
+      //Integer unique = localIndex();
     int i = 0;
 
     for(i = 0; i < getNumElseIfStmt(); i++){
-      getElseIfStmt(i).getCondition().genEval(out);
+      getElseIfStmt(i).getCondition().genEval(out, j);
       out.append(" _skipThen"+unique+i);
       out.println();
 
-      getElseIfStmt(i).getThen().genEval(out);
+      getElseIfStmt(i).getThen().genEval(out, j*100);
       out.println("        jmp _condSucc"+unique);
 
       out.println("        _skipThen"+unique+i+":");
@@ -113,42 +103,38 @@ aspect CodeGen {
     out.println("        jmp _else"+unique);
     out.println("        _condSucc"+unique+":");
   }
-  public void ElseIfStmt.genEval(PrintStream out){
+  public void ElseIfStmt.genEval(PrintStream out, int j){
   }
-  public void ElseStmt.genEval(PrintStream out) throws Exception{
-    getBlock().genEval(out);
+  public void ElseStmt.genEval(PrintStream out, int j) {
+    getBlock().genEval(out, j*100);
   }
 
-  public void AssigmtStmt.genEval(PrintStream out) {
+  public void AssigmtStmt.genEval(PrintStream out, int j) {
     //out.println("IN AssigmtStmt call");
-    if(hasRight()) getRight().genEval(out);
+    if(hasRight()) getRight().genEval(out, j);
     else out.println("        movq $0, %rax");
-    getLeft().genEval(out);
+    getLeft().genEval(out, j);
   }
-  public void AssigmtUse.genEval(PrintStream out) {
+  public void AssigmtUse.genEval(PrintStream out, int j) {
     //out.println("IN AssigmtUse call");
-    getRight().genEval(out);
-    getLeft().decl().genEval(out);
+    getRight().genEval(out, j);
+    getLeft().decl().genEval(out, j);
   }
-  public void ReturnStmt.genEval(PrintStream out) {
+  public void ReturnStmt.genEval(PrintStream out, int j) {
     //out.println("IN ReturnStmt call");
-    getReturn().genEval(out);
+    getReturn().genEval(out, j);
+    out.println("        jmp "+enclosingFunction().getDecl().getID()+"_end");
   }
-  public void WhileStmt.genEval(PrintStream out)  throws Exception {
+  public void WhileStmt.genEval(PrintStream out, int j) {
 
     //out.println("IN WhileStmt call");
     out.println("        _startWhile"+localIndex()+":");
-    getCondition().genEval(out);
+    getCondition().genEval(out, j);
     out.append(" _endWhile"+localIndex());
     out.println();
-    try {
-        getThen().genEval(out);
-    } catch (Exception e) {
-        throw new Exception();
-    } finally {
-        out.println("        jmp _startWhile"+localIndex());
-        out.println("        _endWhile"+localIndex()+":");
-    }
+    getThen().genEval(out, j*100);
+    out.println("        jmp _startWhile"+localIndex());
+    out.println("        _endWhile"+localIndex()+":");
   }
 
   /**
@@ -157,74 +143,73 @@ aspect CodeGen {
    *
    * This must be implemented for every subclass of Expr!
    */
-  abstract public void Stmt.genEval(PrintStream out) throws Exception;
+  abstract public void Stmt.genEval(PrintStream out, int j);
 
-  public void IdDecl.genEval(PrintStream out) {
+  public void IdDecl.genEval(PrintStream out, int j) {
     //out.println("In Idecl");
     out.println("        movq %rax, " + address() + " # From IdDecl");
   }
 
-  public void FuncCall.genEval(PrintStream out) {
+  public void FuncCall.genEval(PrintStream out, int j) {
     // Allocate space for local variables:
-    //System.out.println("in FuncCall");
     IdDecl decl = lookup(getID().getID());
     Func func = (Func) decl.getParent();
-    //System.out.println(decl.getID());
-
     for(Expr e : getArgs().getExprs()) {
-        e.genEval(out);
+        e.genEval(out, j);
         out.println("        pushq %rax # From FuncCall");
     }
-    func.genEval(out);
+    out.println("        call "+func.getDecl().getID());
+    out.println("        addq $"+8*(func.getArgs().getNumIdDecl())+", %rsp");
+
   }
 
-  public void IdUse.genEval(PrintStream out) {
+  public void IdUse.genEval(PrintStream out, int j) {
     out.println("        movq " + decl().address() + ", %rax # From IdUse");
   }
 
 /* -------- Math/Expr junk --------- */
 
-  abstract public void Expr.genEval(PrintStream out);
-  public void Add.genEval(PrintStream out) {
+  abstract public void Expr.genEval(PrintStream out, int j);
+  public void Add.genEval(PrintStream out, int j) {
     out.println("# In add!");
-    getLeft().genEval(out);
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");
     out.println("        popq %rax");
     out.println("        addq %rbx, %rax");
   }
-  public void Sub.genEval(PrintStream out) {    // a - b
-    getLeft().genEval(out);
+  public void Sub.genEval(PrintStream out, int j) {    // a - b
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");          // push a
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");     // b = rbx
     out.println("        popq %rax");           // a = rax
     out.println("        subq %rbx, %rax");     // rax = rax - rbx = a - b
   }
-  public void Mod.genEval(PrintStream out) {    // a MOD b => a - (a/b)
-    getLeft().genEval(out);
+  public void Mod.genEval(PrintStream out, int j) {    // a MOD b => a - (a/b)
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");          // push a to stack
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");     // right -> rbx = b
     out.println("        popq %rax");           // pop left -> rax = a
     out.println("        movq $0, %rdx");       // clear rdx before using idivq
     out.println("        idivq %rbx");          // rdx = remainder of rax/rbx = a/b
     out.println("        movq %rdx, %rax");     // move remainder to rax
   }
-  public void Mul.genEval(PrintStream out) {
-    getLeft().genEval(out);
+  public void Mul.genEval(PrintStream out, int j) {
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");
     out.println("        popq %rax");
     out.println("        imulq %rbx, %rax");
   }
 
-  public void Div.genEval(PrintStream out) {
-    getLeft().genEval(out);
+  public void Div.genEval(PrintStream out, int j) {
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");
     out.println("        popq %rax");
     out.println("        movq $0, %rdx");       // NB: clear RDX to prepare division RDX:RAX / RBX
@@ -233,63 +218,132 @@ aspect CodeGen {
 
    /* ---------------- comparisons/Expr ---------------- */
 
-    public void GE.genEval(PrintStream out){    // a>=b
-      getLeft().genEval(out);
+    public void GE.genEval(PrintStream out, int j){    // a>=b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare b to a
       out.append("        jl");
     }
-    public void LE.genEval(PrintStream out){    // a<=b
-      getLeft().genEval(out);
+    public void LE.genEval(PrintStream out, int j){    // a<=b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare b to a
       out.append("        jg");
     }
-    public void GT.genEval(PrintStream out){    // a>b
-      getLeft().genEval(out);
+    public void GT.genEval(PrintStream out, int j){    // a>b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare b to a
       out.append("        jle");;
     }
-    public void LT.genEval(PrintStream out){    // a < b
-      getLeft().genEval(out);
+    public void LT.genEval(PrintStream out, int j){    // a < b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare a to b
       out.append("        jge");
     }
-    public void NE.genEval(PrintStream out){    // a != b
-      getLeft().genEval(out);
+    public void NE.genEval(PrintStream out, int j){    // a != b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare b to a
       out.append("        je");
     }
-    public void EQ.genEval(PrintStream out){    // a == b
-      getLeft().genEval(out);
+    public void EQ.genEval(PrintStream out, int j){    // a == b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare a to b
       out.append("        jne");
     }
-
+  public void Program.writeRead(PrintStream out){
+    // Helper procedures for input:
+    out.println("# Procedure to read number from stdin.");
+    out.println("# C signature: long long int read(void)");
+    out.println("read:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        ### R9  = sign");
+    out.println("        movq $1, %r9            # sign <- 1");
+    out.println("        ### R10 = sum");
+    out.println("        movq $0, %r10           # sum <- 0");
+    out.println("skip_ws: # skip any leading whitespace");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("        cmpq $0, %rax");
+    out.println("        jle atoi_done           # nchar <= 0");
+    out.println("        movb (%rsi), %cl        # c <- current char");
+    out.println("        cmp $32, %cl");
+    out.println("        je skip_ws              # c == space");
+    out.println("        cmp $13, %cl");
+    out.println("        je skip_ws              # c == CR");
+    out.println("        cmp $10, %cl");
+    out.println("        je skip_ws              # c == NL");
+    out.println("        cmp $9, %cl");
+    out.println("        je skip_ws              # c == tab");
+    out.println("        cmp $45, %cl            # check if negative");
+    out.println("        jne atoi_loop");
+    out.println("        movq $-1, %r9           # sign <- -1");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("atoi_loop:");
+    out.println("        cmpq $0, %rax           # while (nchar > 0)");
+    out.println("        jle atoi_done           # leave loop if nchar <= 0");
+    out.println("        movzbq (%rsi), %rcx     # move byte, zero extend to quad-word");
+    out.println("        cmpq $0x30, %rcx        # test if < '0'");
+    out.println("        jl atoi_done            # character is not numeric");
+    out.println("        cmpq $0x39, %rcx        # test if > '9'");
+    out.println("        jg atoi_done            # character is not numeric");
+    out.println("        imulq $10, %r10         # multiply sum by 10");
+    out.println("        subq $0x30, %rcx        # value of character");
+    out.println("        addq %rcx, %r10         # add to sum");
+    out.println("        movq $0, %rdi");
+    out.println("        leaq buf(%rip), %rsi");
+    out.println("        movq $1, %rdx");
+    out.println("        movq $0, %rax");
+    out.println("        syscall                 # get one char: sys_read(0, buf, 1)");
+    out.println("        jmp atoi_loop           # loop back");
+    out.println("atoi_done:");
+    out.println("        imulq %r9, %r10         # sum *= sign");
+    out.println("        movq %r10, %rax         # put result value in RAX");
+    out.println("        popq %rbp");
+    out.println("        ret");
+    out.println();
+    out.println("print_string:");
+    out.println("        pushq %rbp");
+    out.println("        movq %rsp, %rbp");
+    out.println("        movq $1, %rdi");
+    out.println("        movq 16(%rbp), %rsi");
+    out.println("        movq 24(%rbp), %rdx");
+    out.println("        movq $1, %rax");
+    out.println("        syscall");
+    out.println("        popq %rbp");
+    out.println("        ret");
+  }
   public void Program.writePrint(PrintStream out){
-// Helper procedures for input/output:
+    // Helper procedures for output:
     out.println("# Procedure to print number to stdout.");
     out.println("# C signature: void print(long int)");
     out.println("print:");
@@ -330,7 +384,7 @@ aspect CodeGen {
     out.println("        ret");
     out.println("");
   }
-  public void Numeral.genEval(PrintStream out) {
+  public void Numeral.genEval(PrintStream out, int j) {
     out.println("        movq $" + getNUMERAL() + ", %rax");
   }
   /**

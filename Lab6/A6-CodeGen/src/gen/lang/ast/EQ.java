@@ -31,12 +31,12 @@ public class EQ extends CompExpr implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:341
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:266
    */
-  public void genEval(PrintStream out){    // a == b
-      getLeft().genEval(out);
+  public void genEval(PrintStream out, int j){    // a == b
+      getLeft().genEval(out, j);
       out.println("        pushq %rax");        // push a
-      getRight().genEval(out);
+      getRight().genEval(out, j);
       out.println("        movq %rax, %rbx");   // move b to rbx
       out.println("        popq %rax");         // pop a to rax
       out.println("        cmpq %rbx, %rax");   // compare a to b
@@ -44,7 +44,7 @@ public class EQ extends CompExpr implements Cloneable {
     }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:162
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:163
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) == getRight().eval(actrec) ? 1 : 0;

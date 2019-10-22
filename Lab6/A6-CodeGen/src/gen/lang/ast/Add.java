@@ -31,20 +31,20 @@ public class Add extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:248
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:173
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
     out.println("# In add!");
-    getLeft().genEval(out);
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");
     out.println("        popq %rax");
     out.println("        addq %rbx, %rax");
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:135
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:136
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) + getRight().eval(actrec);

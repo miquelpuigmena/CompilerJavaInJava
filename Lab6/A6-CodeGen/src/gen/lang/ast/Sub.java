@@ -31,19 +31,19 @@ public class Sub extends BinaryExpr implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:257
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:182
    */
-  public void genEval(PrintStream out) {    // a - b
-    getLeft().genEval(out);
+  public void genEval(PrintStream out, int j) {    // a - b
+    getLeft().genEval(out, j);
     out.println("        pushq %rax");          // push a
-    getRight().genEval(out);
+    getRight().genEval(out, j);
     out.println("        movq %rax, %rbx");     // b = rbx
     out.println("        popq %rax");           // a = rax
     out.println("        subq %rbx, %rax");     // rax = rax - rbx = a - b
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:138
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:139
    */
   public int eval(ActivationRecord actrec) {
 		return getLeft().eval(actrec) - getRight().eval(actrec);

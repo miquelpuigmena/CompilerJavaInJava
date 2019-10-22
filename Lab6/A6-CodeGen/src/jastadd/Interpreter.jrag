@@ -11,7 +11,7 @@ aspect Interpreter {
                 return f;
             }
         }
-        throw new RuntimeException("No" + name + "function");
+        throw new RuntimeException("No " + name + " function");
     }
 
     public void Program.eval() {
@@ -29,9 +29,9 @@ aspect Interpreter {
             return Integer.valueOf(e.getMessage());
         }
         if(getDecl().getID().equals("print")){
-            //System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
+            // System.out.println(actrec.get(getArgs().getIdDecl(0).uniqueName()));
         } else if (getDecl().getID().equals("read")){
-            return Integer.valueOf(this.scan.nextInt());
+            // return Integer.valueOf(this.scan.nextInt());
         } //else {
             //throw new RuntimeException("Return statement missing");
         //}
@@ -108,6 +108,7 @@ aspect Interpreter {
         Func func = (Func) decl.getParent();
         int i = 0;
         for(Expr e : getArgs().getExprs()) {
+            //System.out.println(func.getArgs().getIdDecl(i).uniqueName()+getID());
             innerActrec.store(func.getArgs().getIdDecl(i).uniqueName(), e.eval(actrec));
             i++;
         }

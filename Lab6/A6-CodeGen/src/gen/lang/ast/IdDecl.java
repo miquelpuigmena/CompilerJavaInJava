@@ -30,15 +30,15 @@ public class IdDecl extends Atomic implements Cloneable {
 	}
   /**
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:222
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:148
    */
-  public void genEval(PrintStream out) {
+  public void genEval(PrintStream out, int j) {
     //out.println("In Idecl");
     out.println("        movq %rax, " + address() + " # From IdDecl");
   }
   /**
    * @aspect Interpreter
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:121
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/Interpreter.jrag:122
    */
   public int eval(ActivationRecord actrec) {
         actrec.store(uniqueName(), DEFAULT_INT);
@@ -88,7 +88,6 @@ public class IdDecl extends Atomic implements Cloneable {
   public void flushAttrCache() {
     super.flushAttrCache();
     isUnknown_reset();
-    uniqueName_reset();
     isMultiDeclared_reset();
     address_reset();
     localIndex_reset();
@@ -96,20 +95,20 @@ public class IdDecl extends Atomic implements Cloneable {
     lookup_String_reset();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:39
+   * @declaredat ASTNode:38
    */
   public void flushCollectionCache() {
     super.flushCollectionCache();
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:43
+   * @declaredat ASTNode:42
    */
   public IdDecl clone() throws CloneNotSupportedException {
     IdDecl node = (IdDecl) super.clone();
     return node;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:48
+   * @declaredat ASTNode:47
    */
   public IdDecl copy() {
     try {
@@ -129,7 +128,7 @@ public class IdDecl extends Atomic implements Cloneable {
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
    * @deprecated Please use treeCopy or treeCopyNoTransform instead
-   * @declaredat ASTNode:67
+   * @declaredat ASTNode:66
    */
   @Deprecated
   public IdDecl fullCopy() {
@@ -140,7 +139,7 @@ public class IdDecl extends Atomic implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:77
+   * @declaredat ASTNode:76
    */
   public IdDecl treeCopyNoTransform() {
     IdDecl tree = (IdDecl) copy();
@@ -161,7 +160,7 @@ public class IdDecl extends Atomic implements Cloneable {
    * The copy is dangling, i.e. has no parent.
    * @return dangling copy of the subtree at this node
    * @apilevel low-level
-   * @declaredat ASTNode:97
+   * @declaredat ASTNode:96
    */
   public IdDecl treeCopy() {
     IdDecl tree = (IdDecl) copy();
@@ -177,7 +176,7 @@ public class IdDecl extends Atomic implements Cloneable {
     return tree;
   }
   /** @apilevel internal 
-   * @declaredat ASTNode:111
+   * @declaredat ASTNode:110
    */
   protected boolean is$Equal(ASTNode node) {
     return super.is$Equal(node) && (tokenString_ID == ((IdDecl) node).tokenString_ID);    
@@ -257,54 +256,6 @@ protected boolean isUnknown_visited = false;
     return isUnknown_value;
   }
 /** @apilevel internal */
-protected boolean uniqueName_visited = false;
-  /** @apilevel internal */
-  private void uniqueName_reset() {
-    uniqueName_computed = false;
-    
-    uniqueName_value = null;
-    uniqueName_visited = false;
-  }
-  /** @apilevel internal */
-  protected boolean uniqueName_computed = false;
-
-  /** @apilevel internal */
-  protected String uniqueName_value;
-
-  /**
-   * @attribute syn
-   * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:16
-   */
-  @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:16")
-  public String uniqueName() {
-    ASTState state = state();
-    if (uniqueName_computed) {
-      return uniqueName_value;
-    }
-    if (uniqueName_visited) {
-      throw new RuntimeException("Circular definition of attribute IdDecl.uniqueName().");
-    }
-    uniqueName_visited = true;
-    state().enterLazyAttribute();
-    uniqueName_value = uniqueName_compute();
-    uniqueName_computed = true;
-    state().leaveLazyAttribute();
-    uniqueName_visited = false;
-    return uniqueName_value;
-  }
-  /** @apilevel internal */
-  private String uniqueName_compute() {
-  	    ASTNode parent = getParent();
-  	    String id = getID();
-  	    while(!Program.class.isInstance(parent)) {
-  	        id = id+"_"+parent.getClass().getName();
-  	        parent = parent.getParent();
-  	    }
-  	    return id;
-  	}
-/** @apilevel internal */
 protected boolean isMultiDeclared_visited = false;
   /** @apilevel internal */
   private void isMultiDeclared_reset() {
@@ -320,10 +271,10 @@ protected boolean isMultiDeclared_visited = false;
   /**
    * @attribute syn
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:29
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:39
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:29")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:39")
   public boolean isMultiDeclared() {
     ASTState state = state();
     if (isMultiDeclared_computed) {
@@ -359,10 +310,10 @@ protected boolean address_visited = false;
    * Address of local variable variable in the current stack frame.
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:399
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:393
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:399")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:393")
   public String address() {
     ASTState state = state();
     if (address_computed) {
@@ -395,10 +346,10 @@ protected boolean localIndex_visited = false;
   /**
    * @attribute syn
    * @aspect CodeGen
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:412
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:406
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.SYN)
-  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:409")
+  @ASTNodeAnnotation.Source(aspect="CodeGen", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/CodeGen.jrag:403")
   public int localIndex() {
     ASTState state = state();
     if (localIndex_computed) {
@@ -456,10 +407,10 @@ protected boolean type_visited = false;
   /**
    * @attribute inh
    * @aspect NameAnalysis
-   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:28
+   * @declaredat /home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:38
    */
   @ASTNodeAnnotation.Attribute(kind=ASTNodeAnnotation.Kind.INH)
-  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:28")
+  @ASTNodeAnnotation.Source(aspect="NameAnalysis", declaredAt="/home/miquel/Documents/LTH/compilers/Lab6/A6-CodeGen/src/jastadd/NameAnalysis.jrag:38")
   public IdDecl lookup(String name) {
     Object _parameters = name;
     if (lookup_String_visited == null) lookup_String_visited = new java.util.HashSet(4);
